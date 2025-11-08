@@ -1,0 +1,4 @@
+/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/foo.dir
+/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/boo.dir
+/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/edit_cache.dir
+/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/CMakeFiles/_CMakeLTOTest-CXX/bin/CMakeFiles/rebuild_cache.dir

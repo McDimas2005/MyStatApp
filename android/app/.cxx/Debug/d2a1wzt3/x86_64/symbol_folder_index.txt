@@ -1,0 +1,1 @@
+/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/x86_64
