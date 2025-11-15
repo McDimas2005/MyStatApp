@@ -129,7 +129,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/RNSVG.podspec",
-          "version": "15.14.0",
+          "version": "15.15.0",
           "configurations": [],
           "scriptPhases": []
         },

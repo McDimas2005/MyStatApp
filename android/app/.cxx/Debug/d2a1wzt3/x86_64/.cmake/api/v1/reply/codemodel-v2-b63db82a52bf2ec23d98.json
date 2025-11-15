@@ -132,42 +132,42 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "appmodules::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-appmodules-Debug-e471f2bb9d606df06f42.json",
+					"jsonFile" : "target-appmodules-Debug-b3be62f21c03de0dce13.json",
 					"name" : "appmodules",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 1,
 					"id" : "react_codegen_rnasyncstorage::@1596841e19ec5b9eeffe",
-					"jsonFile" : "target-react_codegen_rnasyncstorage-Debug-5ec2694cfd320829080a.json",
+					"jsonFile" : "target-react_codegen_rnasyncstorage-Debug-27ff91d23368ff43151a.json",
 					"name" : "react_codegen_rnasyncstorage",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 2,
 					"id" : "react_codegen_rnpicker::@e8bb2e9e833f47d0d516",
-					"jsonFile" : "target-react_codegen_rnpicker-Debug-b10b128be026a548c005.json",
+					"jsonFile" : "target-react_codegen_rnpicker-Debug-b63cdedac1decbf7d0ef.json",
 					"name" : "react_codegen_rnpicker",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 4,
 					"id" : "react_codegen_rnscreens::@25bcbd507e98d3a854ad",
-					"jsonFile" : "target-react_codegen_rnscreens-Debug-553138c0c4889ae12e7e.json",
+					"jsonFile" : "target-react_codegen_rnscreens-Debug-7f2d487cd09e9bda61f7.json",
 					"name" : "react_codegen_rnscreens",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 5,
 					"id" : "react_codegen_rnsvg::@4f40eb209d0c0b4a3b65",
-					"jsonFile" : "target-react_codegen_rnsvg-Debug-7905801d6e79109e1784.json",
+					"jsonFile" : "target-react_codegen_rnsvg-Debug-b842ad8ea4d7e61a13e0.json",
 					"name" : "react_codegen_rnsvg",
 					"projectIndex" : 0
 				},
 				{
 					"directoryIndex" : 3,
 					"id" : "react_codegen_safeareacontext::@7984cd80db47aa7b952a",
-					"jsonFile" : "target-react_codegen_safeareacontext-Debug-d2ec9d1468cb83cbf2d9.json",
+					"jsonFile" : "target-react_codegen_safeareacontext-Debug-eac91881ae60a7e8c12d.json",
 					"name" : "react_codegen_safeareacontext",
 					"projectIndex" : 0
 				}
@@ -177,7 +177,7 @@
 	"kind" : "codemodel",
 	"paths" : 
 	{
-		"build" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a",
+		"build" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/x86_64",
 		"source" : "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native/ReactAndroid/cmake-utils/default-app-setup"
 	},
 	"version" : 

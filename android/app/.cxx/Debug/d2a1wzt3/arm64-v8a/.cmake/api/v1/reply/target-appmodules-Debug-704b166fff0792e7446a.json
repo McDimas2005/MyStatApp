@@ -2,7 +2,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/armeabi-v7a/libappmodules.so"
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/arm64-v8a/libappmodules.so"
 		}
 	],
 	"backtrace" : 3,
@@ -25,8 +25,7 @@
 			"/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native/ReactCommon/cmake-utils/react-native-flags.cmake",
 			"/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt",
 			"/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt",
-			"/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt",
-			"/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/android/src/main/jni/CMakeLists.txt"
+			"/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-screens/android/src/main/jni/CMakeLists.txt"
 		],
 		"nodes" : 
 		[
@@ -111,15 +110,6 @@
 				"file" : 5,
 				"line" : 85,
 				"parent" : 14
-			},
-			{
-				"file" : 6
-			},
-			{
-				"command" : 6,
-				"file" : 6,
-				"line" : 65,
-				"parent" : 16
 			}
 		]
 	},
@@ -129,7 +119,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -march=armv7-a -mthumb -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
+					"fragment" : "-g -DANDROID -fdata-sections -ffunction-sections -funwind-tables -fstack-protector-strong -no-canonical-prefixes -D__BIONIC_NO_PAGE_SIZE_MACRO -D_FORTIFY_SOURCE=2 -Wformat -Werror=format-security   -fno-limit-debug-info  -fPIC"
 				},
 				{
 					"backtrace" : 7,
@@ -221,10 +211,6 @@
 					"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-screens/android/src/main/jni"
 				},
 				{
-					"backtrace" : 17,
-					"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/android/src/main/jni"
-				},
-				{
 					"backtrace" : 4,
 					"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-async-storage/async-storage/android/build/generated/source/codegen/jni/."
 				},
@@ -293,6 +279,10 @@
 					"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnsvg"
 				},
 				{
+					"backtrace" : 4,
+					"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/android/src/main/jni"
+				},
+				{
 					"backtrace" : 5,
 					"isSystem" : true,
 					"path" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/5fa135f9220cf0ae1e3ee40cd371125b/transformed/fbjni-0.7.0/prefab/modules/fbjni/include"
@@ -349,42 +339,42 @@
 		"commandFragments" : 
 		[
 			{
-				"fragment" : "-Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments",
+				"fragment" : "-Wl,-z,max-page-size=16384 -Wl,--build-id=sha1 -Wl,--no-rosegment -Wl,--no-undefined-version -Wl,--fatal-warnings -Wl,--no-undefined -Qunused-arguments",
 				"role" : "flags"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/armeabi-v7a/libreact_codegen_rnpicker.so",
+				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/arm64-v8a/libreact_codegen_rnpicker.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/armeabi-v7a/libreact_codegen_safeareacontext.so",
+				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/arm64-v8a/libreact_codegen_safeareacontext.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/armeabi-v7a/libreact_codegen_rnscreens.so",
+				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/arm64-v8a/libreact_codegen_rnscreens.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/armeabi-v7a/libreact_codegen_rnsvg.so",
+				"fragment" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/Debug/d2a1wzt3/obj/arm64-v8a/libreact_codegen_rnsvg.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 5,
-				"fragment" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/5fa135f9220cf0ae1e3ee40cd371125b/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.armeabi-v7a/libfbjni.so",
+				"fragment" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/5fa135f9220cf0ae1e3ee40cd371125b/transformed/fbjni-0.7.0/prefab/modules/fbjni/libs/android.arm64-v8a/libfbjni.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 5,
-				"fragment" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/1e84847373c8b60ddb3f088099977c2a/transformed/react-android-0.82.1-debug/prefab/modules/jsi/libs/android.armeabi-v7a/libjsi.so",
+				"fragment" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/1e84847373c8b60ddb3f088099977c2a/transformed/react-android-0.82.1-debug/prefab/modules/jsi/libs/android.arm64-v8a/libjsi.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 5,
-				"fragment" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/1e84847373c8b60ddb3f088099977c2a/transformed/react-android-0.82.1-debug/prefab/modules/reactnative/libs/android.armeabi-v7a/libreactnative.so",
+				"fragment" : "/home/mcdimas/.gradle/caches/9.0.0/transforms/1e84847373c8b60ddb3f088099977c2a/transformed/react-android-0.82.1-debug/prefab/modules/reactnative/libs/android.arm64-v8a/libreactnative.so",
 				"role" : "libraries"
 			},
 			{
@@ -446,43 +436,43 @@
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ComponentDescriptors.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ComponentDescriptors.cpp.o",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/EventEmitters.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/EventEmitters.cpp.o",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/Props.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/Props.cpp.o",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ShadowNodes.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/ShadowNodes.cpp.o",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/States.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/States.cpp.o",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/rnasyncstorageJSI-generated.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/react/renderer/components/rnasyncstorage/rnasyncstorageJSI-generated.cpp.o",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 4,
 			"isGenerated" : true,
-			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/armeabi-v7a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/rnasyncstorage-generated.cpp.o",
+			"path" : "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/rnasyncstorage_autolinked_build/CMakeFiles/react_codegen_rnasyncstorage.dir/rnasyncstorage-generated.cpp.o",
 			"sourceGroupIndex" : 1
 		}
 	],
