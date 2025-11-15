@@ -37,6 +37,37 @@ if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
   file(TOUCH_NOCREATE "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/CMakeFiles/cmake.verify_globs")
 endif()
 
+# LIB_CUSTOM_SRCS at /home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt:20 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/*.cpp")
+set(OLD_GLOB
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDialogPickerMeasurementsManager.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDialogPickerShadowNode.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDialogPickerState.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDropdownPickerMeasurementsManager.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDropdownPickerShadowNode.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/RNCAndroidDropdownPickerState.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/rnpicker.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
+# LIB_CODEGEN_SRCS at /home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt:21 (file)
+file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/*.cpp")
+set(OLD_GLOB
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/ComponentDescriptors.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/EventEmitters.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/Props.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/ShadowNodes.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/States.cpp"
+  "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/../../../build/generated/source/codegen/jni/react/renderer/components/rnpicker/rnpickerJSI-generated.cpp"
+  )
+if(NOT "${NEW_GLOB}" STREQUAL "${OLD_GLOB}")
+  message("-- GLOB mismatch!")
+  file(TOUCH_NOCREATE "/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/Debug/d2a1wzt3/arm64-v8a/CMakeFiles/cmake.verify_globs")
+endif()
+
 # LIB_CUSTOM_SRCS at /home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-safe-area-context/android/src/main/jni/CMakeLists.txt:12 (file)
 file(GLOB NEW_GLOB LIST_DIRECTORIES true "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-safe-area-context/android/src/main/jni/*.cpp")
 set(OLD_GLOB
