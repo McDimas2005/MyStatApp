@@ -6,7 +6,7 @@ import { StatusBar } from 'react-native';
 import { StatProvider } from './src/context/StatContext';
 import RootNavigator from './src/navigation';
 
-function App(): JSX.Element {
+function App() {
   return (
     <StatProvider>
       {/* Optional: tweak bar style later */}

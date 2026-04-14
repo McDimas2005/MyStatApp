@@ -14,6 +14,10 @@ import SkillsScreen from './screens/SkillsScreen';
 import SkillDetailScreen from './screens/SkillDetailScreen';
 import AnalyticsScreen from './screens/AnalyticsScreen';
 import SettingsScreen from './screens/SettingsScreen';
+import QuickLogScreen from './screens/QuickLogScreen';
+import CoreFormScreen from './screens/CoreFormScreen';
+import SkillFormScreen from './screens/SkillFormScreen';
+import CoreStreakCalendarScreen from './screens/CoreStreakCalendarScreen';
 
 const HomeStackNav = createNativeStackNavigator();
 const AnalyticsStackNav = createNativeStackNavigator();
@@ -26,8 +30,14 @@ function HomeStack() {
   return (
     <HomeStackNav.Navigator>
       <HomeStackNav.Screen name="HomeMain" component={HomeScreen} options={{ title: 'Home' }} />
+      <HomeStackNav.Screen name="AddCore" component={CoreFormScreen} options={{ title: 'Create Core' }} />
+      <HomeStackNav.Screen name="EditCore" component={CoreFormScreen} options={{ title: 'Edit Core' }} />
+      <HomeStackNav.Screen name="AddSkill" component={SkillFormScreen} options={{ title: 'Create Skill' }} />
+      <HomeStackNav.Screen name="EditSkill" component={SkillFormScreen} options={{ title: 'Edit Skill' }} />
       <HomeStackNav.Screen name="Habits" component={HabitsScreen} />
       <HomeStackNav.Screen name="AddHabit" component={AddHabitScreen} options={{ title: 'Add Habit' }} />
+      <HomeStackNav.Screen name="EditHabit" component={AddHabitScreen} options={{ title: 'Edit Habit' }} />
+      <HomeStackNav.Screen name="QuickLog" component={QuickLogScreen} options={{ title: 'Quick Log' }} />
       <HomeStackNav.Screen name="HabitDetail" component={HabitDetailScreen} options={{ title: 'Habit Detail' }} />
       <HomeStackNav.Screen name="CoreDetail" component={CoreDetailScreen} options={{ title: 'Core Detail' }} />
       <HomeStackNav.Screen name="Skills" component={SkillsScreen} />
@@ -40,6 +50,11 @@ function AnalyticsStack() {
   return (
     <AnalyticsStackNav.Navigator>
       <AnalyticsStackNav.Screen name="AnalyticsMain" component={AnalyticsScreen} options={{ title: 'Analytics' }} />
+      <AnalyticsStackNav.Screen
+        name="CoreStreakCalendar"
+        component={CoreStreakCalendarScreen}
+        options={{ title: 'Core Streak Calendar' }}
+      />
     </AnalyticsStackNav.Navigator>
   );
 }

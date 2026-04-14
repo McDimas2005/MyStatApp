@@ -1,6 +1,16 @@
 // src/context/StatContext.js
-import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { KEYS, loadList, saveList } from '../utils/storage';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import {
+  KEYS,
+  loadList,
+  loadSettings,
+  loadValue,
+  removeValue,
+  saveList,
+  saveSettings,
+  saveValue,
+} from '../utils/storage';
+import { generateAnalyticsSampleData } from '../utils/sampleData';
 
 const StatContext = createContext();
 
@@ -32,6 +42,13 @@ const DEFAULT_SKILLS = [
   { id: 'skill-agere-contra', coreId: 'core-selfcontrol', name: 'Agere-Contra', totalScore: 0 },
 ];
 
+const DEFAULT_SETTINGS = {
+  theme: 'light',
+  totalScoreTarget: 10000,
+  averageScoreTarget: 1000,
+  compactNumbers: true,
+};
+
 function todayDate() {
   return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
 }
@@ -51,16 +68,27 @@ export function StatProvider({ children }) {
   const [habits, setHabits] = useState([]);
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [hasSampleBackup, setHasSampleBackup] = useState(false);
+  const [settings, setSettings] = useState(DEFAULT_SETTINGS);
 
   // Initial load + seeding
   useEffect(() => {
     (async () => {
       try {
-        const [loadedCores, loadedSkills, loadedHabits, loadedEvents] = await Promise.all([
+        const [
+          loadedCores,
+          loadedSkills,
+          loadedHabits,
+          loadedEvents,
+          loadedSampleBackup,
+          loadedSettings,
+        ] = await Promise.all([
           loadList(KEYS.cores),
           loadList(KEYS.skills),
           loadList(KEYS.habits),
           loadList(KEYS.events),
+          loadValue(KEYS.sampleBackup, null),
+          loadSettings(),
         ]);
 
         let nextCores = loadedCores;
@@ -86,6 +114,8 @@ export function StatProvider({ children }) {
         setSkills(nextSkills);
         setHabits(loadedHabits);
         setEvents(loadedEvents);
+        setHasSampleBackup(Boolean(loadedSampleBackup));
+        setSettings({ ...DEFAULT_SETTINGS, ...loadedSettings });
 
         // Persist seeds if they were just created
         if (!loadedCores.length) await saveList(KEYS.cores, nextCores);
@@ -118,6 +148,11 @@ export function StatProvider({ children }) {
     if (loading) return;
     saveList(KEYS.events, events).catch((e) => console.warn('Failed to save events', e));
   }, [events, loading]);
+
+  useEffect(() => {
+    if (loading) return;
+    saveSettings(settings).catch((e) => console.warn('Failed to save settings', e));
+  }, [settings, loading]);
 
   // ID helpers
   const createId = (prefix, name) =>
@@ -326,27 +361,129 @@ export function StatProvider({ children }) {
     // On next reload, seeds will be applied again
   }
 
-  const value = useMemo(
-    () => ({
-      loading,
-      cores,
-      skills,
-      habits,
-      events,
-      createCore,
-      updateCore,
-      removeCore,
-      createSkill,
-      updateSkill,
-      removeSkill,
-      createHabit,
-      updateHabit,
-      removeHabit,
-      logHabit,
-      resetAll,
-    }),
-    [loading, cores, skills, habits, events],
-  );
+  function resetProgress() {
+    const now = new Date().toISOString();
+
+    setCores((prev) =>
+      prev.map((core) => ({
+        ...core,
+        totalScore: 0,
+        updatedAt: now,
+      })),
+    );
+
+    setSkills((prev) =>
+      prev.map((skill) => ({
+        ...skill,
+        totalScore: 0,
+        updatedAt: now,
+      })),
+    );
+
+    setHabits((prev) =>
+      prev.map((habit) => ({
+        ...habit,
+        countDays: 0,
+        streak: 0,
+        bestStreak: 0,
+        totalScore: 0,
+        lastDoneDate: undefined,
+        updatedAt: now,
+      })),
+    );
+
+    setEvents([]);
+  }
+
+  async function applyAnalyticsSampleData() {
+    if (!hasSampleBackup) {
+      await saveValue(KEYS.sampleBackup, {
+        cores,
+        skills,
+        habits,
+        events,
+        capturedAt: new Date().toISOString(),
+      });
+      setHasSampleBackup(true);
+    }
+
+    const sourceCores = cores.length ? cores : DEFAULT_CORES.map((core) => ({ ...core }));
+    const sourceSkills = skills.length ? skills : DEFAULT_SKILLS.map((skill) => ({ ...skill }));
+    const sampleData = generateAnalyticsSampleData(sourceCores, sourceSkills);
+
+    setCores(sampleData.cores);
+    setSkills(sampleData.skills);
+    setHabits(sampleData.habits);
+    setEvents(sampleData.events);
+
+    return {
+      coreCount: sampleData.cores.length,
+      skillCount: sampleData.skills.length,
+      habitCount: sampleData.habits.length,
+      eventCount: sampleData.events.length,
+    };
+  }
+
+  async function restoreRealData() {
+    const backup = await loadValue(KEYS.sampleBackup, null);
+    if (!backup) {
+      throw new Error('No saved real-data snapshot found.');
+    }
+
+    setCores(backup.cores ?? []);
+    setSkills(backup.skills ?? []);
+    setHabits(backup.habits ?? []);
+    setEvents(backup.events ?? []);
+
+    await removeValue(KEYS.sampleBackup);
+    setHasSampleBackup(false);
+  }
+
+  function updateScoreTargets({ totalScoreTarget, averageScoreTarget }) {
+    setSettings((prev) => ({
+      ...prev,
+      totalScoreTarget:
+        totalScoreTarget === undefined ? prev.totalScoreTarget : Number(totalScoreTarget),
+      averageScoreTarget:
+        averageScoreTarget === undefined ? prev.averageScoreTarget : Number(averageScoreTarget),
+    }));
+  }
+
+  function updateSettings(patch) {
+    setSettings((prev) => ({
+      ...prev,
+      ...patch,
+    }));
+  }
+
+  const value = {
+    loading,
+    cores,
+    skills,
+    habits,
+    events,
+    hasSampleBackup,
+    settings,
+    totalScoreTarget: settings.totalScoreTarget,
+    averageScoreTarget: settings.averageScoreTarget,
+    compactNumbers: settings.compactNumbers,
+    createCore,
+    updateCore,
+    removeCore,
+    createSkill,
+    updateSkill,
+    removeSkill,
+    createHabit,
+    updateHabit,
+    removeHabit,
+    logHabit,
+    resetAll,
+    resetProgress,
+    applyAnalyticsSampleData,
+    restoreRealData,
+    updateScoreTargets,
+    updateSettings,
+  };
 
   return <StatContext.Provider value={value}>{children}</StatContext.Provider>;
 }

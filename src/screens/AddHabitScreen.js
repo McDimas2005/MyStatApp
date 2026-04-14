@@ -1,16 +1,43 @@
 // src/screens/AddHabitScreen.js
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, TextInput, TouchableOpacity, StyleSheet, Alert, Text, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { useStats } from '../context/StatContext';
 
-export default function AddHabitScreen({ navigation }) {
-  const { skills, createHabit } = useStats();
-  const [name, setName] = useState('');
-  const [description, setDescription] = useState('');
-  const [metric, setMetric] = useState('session');
-  const [scale, setScale] = useState('0.2');
-  const [skillId, setSkillId] = useState(skills[0]?.id || '');
+export default function AddHabitScreen({ navigation, route }) {
+  const { habitId, skillId: presetSkillId } = route.params ?? {};
+  const { habits, skills, createHabit, updateHabit } = useStats();
+  const existingHabit = habitId ? habits.find((habit) => habit.id === habitId) : null;
+  const isEdit = Boolean(existingHabit);
+
+  const [name, setName] = useState(existingHabit?.name ?? '');
+  const [description, setDescription] = useState(existingHabit?.description ?? '');
+  const [metric, setMetric] = useState(existingHabit?.metric ?? 'session');
+  const [scale, setScale] = useState(existingHabit ? String(existingHabit.scale) : '0.2');
+  const [skillId, setSkillId] = useState(existingHabit?.skillId ?? presetSkillId ?? skills[0]?.id ?? '');
+
+  if (habitId && !existingHabit) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyTitle}>Habit not found</Text>
+        <Text style={styles.emptyText}>The habit you are trying to edit no longer exists.</Text>
+      </View>
+    );
+  }
+
+  if (!skills.length) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyTitle}>Create a skill first</Text>
+        <Text style={styles.emptyText}>
+          Habits belong to a skill, so you need at least one skill before creating habits.
+        </Text>
+        <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate('AddSkill')}>
+          <Text style={styles.primaryButtonText}>Create Skill</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
 
   const handleSubmit = () => {
     if (!name.trim()) return Alert.alert('Error', 'Habit name is required');
@@ -22,7 +49,21 @@ export default function AddHabitScreen({ navigation }) {
       return Alert.alert('Error', 'Scale must be a positive number');
     }
 
-    createHabit({
+    if (isEdit) {
+      updateHabit(existingHabit.id, {
+        name: name.trim(),
+        description,
+        metric: metric.trim(),
+        skillId,
+        scale: scaleNum,
+      });
+      Alert.alert('Habit updated', `"${name.trim()}" has been updated.`, [
+        { text: 'OK', onPress: () => navigation.replace('HabitDetail', { id: existingHabit.id }) },
+      ]);
+      return;
+    }
+
+    const nextHabit = createHabit({
       name,
       description,
       metric,
@@ -30,12 +71,18 @@ export default function AddHabitScreen({ navigation }) {
       scale: scaleNum,
     });
 
-    Alert.alert('Habit created', `"${name}" has been added.`);
-    navigation.goBack();
+    Alert.alert('Habit created', `"${name.trim()}" has been added.`, [
+      { text: 'OK', onPress: () => navigation.replace('HabitDetail', { id: nextHabit.id }) },
+    ]);
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+      <Text style={styles.title}>{isEdit ? 'Edit Habit' : 'Create Habit'}</Text>
+      <Text style={styles.subtitle}>
+        Habits are the daily actions you log to build skill and core progress.
+      </Text>
+
       <Text style={styles.label}>Habit Name</Text>
       <TextInput
         style={styles.input}
@@ -83,13 +130,18 @@ export default function AddHabitScreen({ navigation }) {
         </Picker>
       </View>
 
-      <Button title="Create Habit" onPress={handleSubmit} />
-    </View>
+      <TouchableOpacity style={styles.primaryButton} onPress={handleSubmit}>
+        <Text style={styles.primaryButtonText}>{isEdit ? 'Save Habit' : 'Create Habit'}</Text>
+      </TouchableOpacity>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 16, backgroundColor: '#f7f9fd' },
+  container: { flex: 1, backgroundColor: '#f7f9fd' },
+  content: { padding: 16, paddingBottom: 32 },
+  title: { fontSize: 22, fontWeight: '700', color: '#0b3d91' },
+  subtitle: { marginTop: 6, fontSize: 14, color: '#4a5568', lineHeight: 20 },
   label: { marginTop: 12, marginBottom: 4, fontSize: 14, color: '#243b53' },
   input: {
     borderWidth: 1,
@@ -109,4 +161,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     marginBottom: 16,
   },
+  primaryButton: {
+    marginTop: 8,
+    backgroundColor: '#0b3d91',
+    borderRadius: 12,
+    alignItems: 'center',
+    paddingVertical: 14,
+  },
+  primaryButtonText: { color: '#fff', fontSize: 15, fontWeight: '700' },
+  emptyContainer: {
+    flex: 1,
+    backgroundColor: '#f7f9fd',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 24,
+  },
+  emptyTitle: { fontSize: 20, fontWeight: '700', color: '#0b3d91' },
+  emptyText: { marginTop: 8, fontSize: 14, color: '#4a5568', textAlign: 'center', lineHeight: 20 },
 });

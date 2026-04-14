@@ -1,10 +1,11 @@
 // src/screens/HabitsScreen.js
 import React from 'react';
-import { View, FlatList, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, FlatList, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useStats } from '../context/StatContext';
+import { formatNumber } from '../utils/numberFormat';
 
 export default function HabitsScreen({ navigation }) {
-  const { habits, skills } = useStats();
+  const { habits, skills, compactNumbers } = useStats();
 
   const renderItem = ({ item }) => {
     const skill = skills.find((s) => s.id === item.skillId);
@@ -18,7 +19,7 @@ export default function HabitsScreen({ navigation }) {
           Skill: {skill?.name ?? 'Unknown'} · Metric: {item.metric}
         </Text>
         <Text style={styles.stats}>
-          Total Score: {item.totalScore} · Streak: {item.streak} (Best {item.bestStreak}) · Days: {item.countDays}
+          Total Score: {formatNumber(item.totalScore, { compact: compactNumbers })} · Streak: {formatNumber(item.streak, { compact: compactNumbers })} (Best {formatNumber(item.bestStreak, { compact: compactNumbers })}) · Days: {formatNumber(item.countDays, { compact: compactNumbers })}
         </Text>
       </TouchableOpacity>
     );
@@ -26,7 +27,9 @@ export default function HabitsScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Button title="Add Habit" onPress={() => navigation.navigate('AddHabit')} />
+      <TouchableOpacity style={styles.primaryButton} onPress={() => navigation.navigate('AddHabit')}>
+        <Text style={styles.primaryButtonText}>Create Habit</Text>
+      </TouchableOpacity>
       <FlatList
         data={habits}
         keyExtractor={(item) => item.id}
@@ -39,6 +42,13 @@ export default function HabitsScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f7f9fd' },
+  primaryButton: {
+    backgroundColor: '#0b3d91',
+    borderRadius: 12,
+    alignItems: 'center',
+    paddingVertical: 14,
+  },
+  primaryButtonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,
