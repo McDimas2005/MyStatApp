@@ -12,7 +12,14 @@ export const KEYS = {
 
 export async function loadValue(key, fallback = null) {
   const raw = await AsyncStorage.getItem(key);
-  return raw ? JSON.parse(raw) : fallback;
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw);
+  } catch (e) {
+    console.warn('Failed to parse storage key:', key, e);
+    await AsyncStorage.removeItem(key);
+    return fallback;
+  }
 }
 
 export async function saveValue(key, value) {
