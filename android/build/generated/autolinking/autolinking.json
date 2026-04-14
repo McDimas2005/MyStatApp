@@ -28,6 +28,34 @@
         }
       }
     },
+    "@react-native-picker/picker": {
+      "root": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker",
+      "name": "@react-native-picker/picker",
+      "platforms": {
+        "ios": {
+          "podspecPath": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/RNCPicker.podspec",
+          "version": "2.11.4",
+          "configurations": [],
+          "scriptPhases": []
+        },
+        "android": {
+          "sourceDir": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android",
+          "packageImportPath": "import com.reactnativecommunity.picker.RNCPickerPackage;",
+          "packageInstance": "new RNCPickerPackage()",
+          "buildTypes": [],
+          "libraryName": "rnpicker",
+          "componentDescriptors": [
+            "RNCAndroidDialogPickerComponentDescriptor",
+            "RNCAndroidDropdownPickerComponentDescriptor"
+          ],
+          "cmakeListsPath": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/@react-native-picker/picker/android/src/main/jni/CMakeLists.txt",
+          "cxxModuleCMakeListsModuleName": null,
+          "cxxModuleCMakeListsPath": null,
+          "cxxModuleHeaderName": null,
+          "isPureCxxDependency": false
+        }
+      }
+    },
     "react-native-safe-area-context": {
       "root": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-safe-area-context",
       "name": "react-native-safe-area-context",
@@ -101,7 +129,7 @@
       "platforms": {
         "ios": {
           "podspecPath": "/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/RNSVG.podspec",
-          "version": "15.14.0",
+          "version": "15.15.0",
           "configurations": [],
           "scriptPhases": []
         },
@@ -370,7 +398,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "xterm-256color"
+          "default": "dumb"
         },
         {
           "name": "--binary-path <string>",
@@ -538,7 +566,7 @@
         {
           "name": "--terminal <string>",
           "description": "Launches the Metro Bundler in a new window using the specified terminal path.",
-          "default": "xterm-256color"
+          "default": "dumb"
         },
         {
           "name": "--appId <string>",

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "skill_001",
+    "name": "Coding Practice",
+    "category": "Skill",
+    "unit": "hours",
+    "total": 42,
+    "goal": 100,
+    "progress": 42,
+    "createdAt": "2025-01-28T10:00:00Z",
+    "updatedAt": "2025-02-01T09:30:00Z"
+  }
+]
