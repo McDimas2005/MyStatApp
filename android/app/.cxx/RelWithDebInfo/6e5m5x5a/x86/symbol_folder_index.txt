@@ -1,0 +1,1 @@
+/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/RelWithDebInfo/6e5m5x5a/obj/x86
