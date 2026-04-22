@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   Alert,
-  FlatList,
   Modal,
   Pressable,
   ScrollView,
@@ -11,8 +10,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import CoreRadarChart from '../components/CoreRadarChart';
 import { useStats } from '../context/StatContext';
-import { formatNumber, formatPercent } from '../utils/numberFormat';
+import { formatNumber } from '../utils/numberFormat';
 
 export default function HomeScreen({ navigation }) {
   const {
@@ -74,47 +74,6 @@ export default function HomeScreen({ navigation }) {
     closeTargetEditor();
   };
 
-  const renderCore = ({ item, index }) => {
-    const score = item.totalScore || 0;
-    const ratio = averageScoreTarget > 0 ? score / averageScoreTarget : 0;
-    const percentage = formatPercent(ratio * 100);
-    const barWidth = `${Math.min(100, score > 0 ? Math.max(8, ratio * 100) : 0)}%`;
-
-    return (
-      <TouchableOpacity
-        style={styles.coreCard}
-        onPress={() => navigation.navigate('CoreDetail', { id: item.id })}
-      >
-        <View style={styles.coreCardTop}>
-          <View style={[styles.coreIcon, { backgroundColor: item.color || '#3b82f6' }]}>
-            <Text style={styles.coreIconText}>{String(index + 1).padStart(2, '0')}</Text>
-          </View>
-
-          <View style={styles.coreHeader}>
-            <Text style={styles.coreName}>{item.name}</Text>
-            <Text style={styles.coreHint}>Tap to manage this core</Text>
-          </View>
-
-          <View style={styles.coreScoreBadge}>
-            <Text style={styles.coreScore}>{formatNumber(score, { compact: compactNumbers })}</Text>
-            <Text style={styles.coreScoreLabel}>score</Text>
-          </View>
-        </View>
-
-        <View style={styles.coreProgressMeta}>
-          <Text style={styles.coreProgressLabel}>vs Average Score Target</Text>
-          <Text style={styles.coreProgressValue}>{percentage}</Text>
-        </View>
-
-        <View style={styles.barBackground}>
-          <View
-            style={[styles.barFill, { width: barWidth, backgroundColor: item.color || '#3b82f6' }]}
-          />
-        </View>
-      </TouchableOpacity>
-    );
-  };
-
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
@@ -123,21 +82,39 @@ export default function HomeScreen({ navigation }) {
 
           <View style={styles.heroStatsRow}>
             <View style={styles.heroStatCard}>
-              <Text style={styles.heroStatNumber}>{formatNumber(totalScore, { compact: compactNumbers })}</Text>
+              <Text style={styles.heroStatNumber}>
+                {formatNumber(totalScore, { compact: compactNumbers })}
+              </Text>
               <Text style={styles.heroStatLabel}>Total Score</Text>
             </View>
             <View style={styles.heroStatCard}>
-              <Text style={styles.heroStatNumber}>{formatNumber(averageScore, { compact: compactNumbers })}</Text>
+              <Text style={styles.heroStatNumber}>
+                {formatNumber(averageScore, { compact: compactNumbers })}
+              </Text>
               <Text style={styles.heroStatLabel}>Average Score</Text>
             </View>
           </View>
+
+          <CoreRadarChart
+            cores={cores}
+            averageScoreTarget={averageScoreTarget}
+            compactNumbers={compactNumbers}
+            title="Core Stats (Your Hero Attributes)"
+            subtitle={`Outer ring = Average Score Target ${formatNumber(averageScoreTarget, {
+              compact: compactNumbers,
+            })}.`}
+            style={styles.heroRadarCard}
+            onPressCore={(core) => navigation.navigate('CoreDetail', { id: core.id })}
+          />
 
           <TouchableOpacity
             style={styles.targetCardFull}
             onPress={() => openTargetEditor('totalScoreTarget')}
           >
             <Text style={styles.targetLabel}>Total Score Target</Text>
-            <Text style={styles.targetValue}>{formatNumber(totalScoreTarget, { compact: compactNumbers })}</Text>
+            <Text style={styles.targetValue}>
+              {formatNumber(totalScoreTarget, { compact: compactNumbers })}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -145,36 +122,21 @@ export default function HomeScreen({ navigation }) {
             onPress={() => openTargetEditor('averageScoreTarget')}
           >
             <Text style={styles.targetLabel}>Average Score Target</Text>
-            <Text style={styles.targetValue}>{formatNumber(averageScoreTarget, { compact: compactNumbers })}</Text>
+            <Text style={styles.targetValue}>
+              {formatNumber(averageScoreTarget, { compact: compactNumbers })}
+            </Text>
           </TouchableOpacity>
         </View>
-
-        <View style={styles.actionRow}>
-          <TouchableOpacity
-            style={styles.primaryActionCard}
-            onPress={() => navigation.navigate('AddCore')}
-          >
-            <Text style={styles.primaryActionEyebrow}>Structure</Text>
-            <Text style={styles.primaryActionTitle}>New Core</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Core Stats (Your Hero Attributes)</Text>
-        </View>
-
-        <FlatList
-          data={cores}
-          keyExtractor={(item) => item.id}
-          renderItem={renderCore}
-          scrollEnabled={false}
-          contentContainerStyle={styles.listContent}
-        />
       </ScrollView>
 
-      <TouchableOpacity style={styles.quickLogFab} onPress={() => navigation.navigate('QuickLog')}>
-        <Text style={styles.quickLogFabLabel}>Quick Log</Text>
-      </TouchableOpacity>
+      <View style={styles.fabRow}>
+        <TouchableOpacity style={styles.secondaryFab} onPress={() => navigation.navigate('AddCore')}>
+          <Text style={styles.secondaryFabLabel}>New Core</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.quickLogFab} onPress={() => navigation.navigate('QuickLog')}>
+          <Text style={styles.quickLogFabLabel}>Quick Log</Text>
+        </TouchableOpacity>
+      </View>
 
       <Modal
         animationType="fade"
@@ -214,7 +176,7 @@ export default function HomeScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f7f9fd' },
-  content: { padding: 16, paddingBottom: 112 },
+  content: { padding: 16, paddingBottom: 128 },
   heroCard: {
     backgroundColor: '#fff',
     borderRadius: 26,
@@ -248,6 +210,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#edf2fb',
   },
+  heroRadarCard: { marginTop: 16 },
   heroStatNumber: { fontSize: 26, fontWeight: '800', color: '#0b3d91' },
   heroStatLabel: { marginTop: 4, fontSize: 12, fontWeight: '700', color: '#52637a' },
   targetCardFull: {
@@ -261,73 +224,32 @@ const styles = StyleSheet.create({
   },
   targetLabel: { fontSize: 11, fontWeight: '700', color: '#7b8794', textTransform: 'uppercase' },
   targetValue: { marginTop: 8, fontSize: 24, fontWeight: '800', color: '#102a43' },
-  actionRow: { marginTop: 16, marginBottom: 8 },
-  primaryActionCard: {
-    backgroundColor: '#ffffff',
-    borderRadius: 22,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#dbe7fb',
-  },
-  primaryActionEyebrow: { fontSize: 11, fontWeight: '700', color: '#7b8794', textTransform: 'uppercase' },
-  primaryActionTitle: { marginTop: 6, fontSize: 18, fontWeight: '700', color: '#0b3d91' },
-  sectionHeader: { marginTop: 12 },
-  sectionTitle: { fontSize: 18, fontWeight: '700', color: '#102a43' },
-  listContent: { paddingTop: 6 },
-  coreCard: {
-    backgroundColor: '#fff',
-    borderRadius: 22,
-    padding: 16,
-    marginTop: 12,
-    borderWidth: 1,
-    borderColor: '#e6eefb',
-  },
-  coreCardTop: { flexDirection: 'row', alignItems: 'center' },
-  coreIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 12,
-  },
-  coreIconText: { color: '#fff', fontSize: 15, fontWeight: '800' },
-  coreHeader: { flex: 1 },
-  coreName: { fontSize: 17, fontWeight: '700', color: '#102a43' },
-  coreHint: { marginTop: 4, fontSize: 12, color: '#7b8794' },
-  coreScoreBadge: {
-    backgroundColor: '#f8fbff',
-    borderRadius: 18,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    minWidth: 72,
-  },
-  coreScore: { fontSize: 20, fontWeight: '800', color: '#0b3d91' },
-  coreScoreLabel: { marginTop: 2, fontSize: 11, fontWeight: '700', color: '#7b8794' },
-  coreProgressMeta: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 16,
-    marginBottom: 8,
-  },
-  coreProgressLabel: { fontSize: 12, fontWeight: '700', color: '#7b8794', textTransform: 'uppercase' },
-  coreProgressValue: { fontSize: 12, fontWeight: '700', color: '#102a43' },
-  barBackground: {
-    height: 12,
-    borderRadius: 999,
-    backgroundColor: '#e8effa',
-    overflow: 'hidden',
-  },
-  barFill: {
-    height: '100%',
-    borderRadius: 999,
-  },
-  quickLogFab: {
+  fabRow: {
     position: 'absolute',
     right: 16,
     bottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  secondaryFab: {
+    backgroundColor: '#eef4ff',
+    borderRadius: 999,
+    paddingVertical: 14,
+    paddingHorizontal: 18,
+    borderWidth: 1,
+    borderColor: '#dbe7fb',
+    marginRight: 10,
+    shadowColor: '#000',
+    shadowOpacity: 0.12,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  secondaryFabLabel: {
+    color: '#0b3d91',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  quickLogFab: {
     backgroundColor: '#0b3d91',
     borderRadius: 999,
     paddingVertical: 14,
