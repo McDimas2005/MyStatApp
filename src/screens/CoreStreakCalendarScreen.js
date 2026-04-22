@@ -3,11 +3,11 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useStats } from '../context/StatContext';
 import { formatNumber, formatPercent } from '../utils/numberFormat';
 import {
-  addMonthsUtc,
+  addMonthsLocal,
   formatMonthLabel,
   getCoreStreakSummary,
   getMonthCalendar,
-  startOfMonthUtc,
+  startOfMonthLocal,
 } from '../utils/coreStreaks';
 
 function getSegmentStyle(cell, week, index) {
@@ -29,7 +29,7 @@ function getSegmentStyle(cell, week, index) {
 export default function CoreStreakCalendarScreen({ navigation, route }) {
   const { coreId } = route.params;
   const { cores, events, compactNumbers } = useStats();
-  const [visibleMonth, setVisibleMonth] = useState(() => startOfMonthUtc(new Date()));
+  const [visibleMonth, setVisibleMonth] = useState(() => startOfMonthLocal(new Date()));
 
   const core = cores.find((entry) => entry.id === coreId);
   const summary = useMemo(
@@ -93,7 +93,7 @@ export default function CoreStreakCalendarScreen({ navigation, route }) {
         <View style={styles.monthHeader}>
           <TouchableOpacity
             style={styles.monthButton}
-            onPress={() => setVisibleMonth((current) => addMonthsUtc(current, -1))}
+            onPress={() => setVisibleMonth((current) => addMonthsLocal(current, -1))}
           >
             <Text style={styles.monthButtonText}>{'<'}</Text>
           </TouchableOpacity>
@@ -102,7 +102,7 @@ export default function CoreStreakCalendarScreen({ navigation, route }) {
 
           <TouchableOpacity
             style={styles.monthButton}
-            onPress={() => setVisibleMonth((current) => addMonthsUtc(current, 1))}
+            onPress={() => setVisibleMonth((current) => addMonthsLocal(current, 1))}
           >
             <Text style={styles.monthButtonText}>{'>'}</Text>
           </TouchableOpacity>

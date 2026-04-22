@@ -1,4 +1,4 @@
-const DAY_MS = 24 * 60 * 60 * 1000;
+import { formatDayString, isNextDay } from './day';
 
 const HABIT_VARIANTS = [
   {
@@ -31,26 +31,19 @@ function slugify(value) {
 
 function utcMiddayDaysAgo(daysAgo) {
   const date = new Date();
-  date.setUTCHours(12, 0, 0, 0);
-  date.setUTCDate(date.getUTCDate() - daysAgo);
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() - daysAgo);
   return date;
 }
 
 function dayString(date) {
-  return date.toISOString().slice(0, 10);
+  return formatDayString(date);
 }
 
 function timestampForDay(dayIndex, eventIndex) {
   const date = utcMiddayDaysAgo(20 - dayIndex);
-  date.setUTCHours(9 + eventIndex * 4, randomInt(0, 45), 0, 0);
+  date.setHours(9 + eventIndex * 4, randomInt(0, 45), 0, 0);
   return date.toISOString();
-}
-
-function isYesterday(prevDay, currDay) {
-  if (!prevDay) return false;
-  const prev = new Date(`${prevDay}T00:00:00Z`);
-  const curr = new Date(`${currDay}T00:00:00Z`);
-  return (curr - prev) / DAY_MS === 1;
 }
 
 function createSampleHabits(skills) {
@@ -147,7 +140,7 @@ export function generateAnalyticsSampleData(baseCores, baseSkills) {
         habit.streak = 1;
       } else if (habit.lastDoneDate === eventSpec.day) {
         habit.streak = Math.max(habit.streak, 1);
-      } else if (isYesterday(habit.lastDoneDate, eventSpec.day)) {
+      } else if (isNextDay(habit.lastDoneDate, eventSpec.day)) {
         habit.streak += 1;
       } else {
         habit.streak = 1;

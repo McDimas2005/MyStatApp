@@ -30,7 +30,7 @@ export default function SkillsScreen({ navigation }) {
         data={skills}
         keyExtractor={(item) => item.id}
         renderItem={renderSkill}
-        contentContainerStyle={{ paddingVertical: 12 }}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
   },
   primaryButtonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
   title: { marginTop: 12, fontSize: 18, fontWeight: '700', color: '#0b3d91' },
+  listContent: { paddingVertical: 12 },
   card: {
     backgroundColor: '#fff',
     borderRadius: 10,

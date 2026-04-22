@@ -1,27 +1,29 @@
-const DAY_MS = 24 * 60 * 60 * 1000;
+import {
+  addMonths,
+  formatDayString,
+  getDaysInMonth,
+  shiftDayString,
+  startOfMonth,
+} from './day';
+
 const WEEKDAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
 
-function padMonthDay(value) {
-  return String(value).padStart(2, '0');
-}
-
 export function todayDayString() {
-  return new Date().toISOString().slice(0, 10);
+  return formatDayString(new Date());
 }
 
-export function startOfMonthUtc(baseDate = new Date()) {
-  return new Date(Date.UTC(baseDate.getUTCFullYear(), baseDate.getUTCMonth(), 1));
+export function startOfMonthLocal(baseDate = new Date()) {
+  return startOfMonth(baseDate);
 }
 
-export function addMonthsUtc(monthDate, delta) {
-  return new Date(Date.UTC(monthDate.getUTCFullYear(), monthDate.getUTCMonth() + delta, 1));
+export function addMonthsLocal(monthDate, delta) {
+  return addMonths(monthDate, delta);
 }
 
 export function formatMonthLabel(monthDate) {
   return monthDate.toLocaleDateString('en-US', {
     month: 'long',
     year: 'numeric',
-    timeZone: 'UTC',
   });
 }
 
@@ -35,11 +37,11 @@ export function buildCoreCompletionSet(events, coreId) {
 
 export function getCurrentStreak(daySet, referenceDay = todayDayString()) {
   let streak = 0;
-  let cursor = new Date(`${referenceDay}T00:00:00Z`);
+  let cursorDay = referenceDay;
 
-  while (daySet.has(cursor.toISOString().slice(0, 10))) {
+  while (daySet.has(cursorDay)) {
     streak += 1;
-    cursor = new Date(cursor.getTime() - DAY_MS);
+    cursorDay = shiftDayString(cursorDay, -1);
   }
 
   return streak;
@@ -55,9 +57,7 @@ export function getBestStreak(daySet) {
     if (!previous) {
       running = 1;
     } else {
-      const prevDate = new Date(`${previous}T00:00:00Z`);
-      const currDate = new Date(`${day}T00:00:00Z`);
-      running = (currDate - prevDate) / DAY_MS === 1 ? running + 1 : 1;
+      running = shiftDayString(previous, 1) === day ? running + 1 : 1;
     }
 
     best = Math.max(best, running);
@@ -67,13 +67,10 @@ export function getBestStreak(daySet) {
   return best;
 }
 
-export function getRecentDayStatuses(daySet, count = 7) {
+export function getRecentDayStatuses(daySet, count = 7, referenceDay = todayDayString()) {
   return Array.from({ length: count }, (_, index) => {
     const daysAgo = count - 1 - index;
-    const date = new Date();
-    date.setUTCHours(0, 0, 0, 0);
-    date.setUTCDate(date.getUTCDate() - daysAgo);
-    const day = date.toISOString().slice(0, 10);
+    const day = shiftDayString(referenceDay, -daysAgo);
 
     return {
       key: day,
@@ -84,16 +81,12 @@ export function getRecentDayStatuses(daySet, count = 7) {
   });
 }
 
-function buildMonthDay(year, monthIndex, dayOfMonth) {
-  return `${year}-${padMonthDay(monthIndex + 1)}-${padMonthDay(dayOfMonth)}`;
-}
-
 export function getMonthCalendar(monthDate, daySet) {
-  const year = monthDate.getUTCFullYear();
-  const monthIndex = monthDate.getUTCMonth();
-  const firstDay = new Date(Date.UTC(year, monthIndex, 1));
-  const firstWeekday = firstDay.getUTCDay();
-  const daysInMonth = new Date(Date.UTC(year, monthIndex + 1, 0)).getUTCDate();
+  const year = monthDate.getFullYear();
+  const monthIndex = monthDate.getMonth();
+  const firstDay = new Date(year, monthIndex, 1);
+  const firstWeekday = firstDay.getDay();
+  const daysInMonth = getDaysInMonth(monthDate);
   const today = todayDayString();
   const cells = [];
 
@@ -109,7 +102,7 @@ export function getMonthCalendar(monthDate, daySet) {
   }
 
   for (let dayOfMonth = 1; dayOfMonth <= daysInMonth; dayOfMonth += 1) {
-    const day = buildMonthDay(year, monthIndex, dayOfMonth);
+    const day = formatDayString(new Date(year, monthIndex, dayOfMonth));
     cells.push({
       key: day,
       label: String(dayOfMonth),

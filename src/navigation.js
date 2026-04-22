@@ -24,6 +24,40 @@ const AnalyticsStackNav = createNativeStackNavigator();
 const SettingsStackNav = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+function getTabLabel(routeName) {
+  if (routeName === 'HomeTab') return 'Home';
+  if (routeName === 'AnalyticsTab') return 'Analytics';
+  if (routeName === 'SettingsTab') return 'Settings';
+  return routeName;
+}
+
+function getTabIcon(routeName) {
+  if (routeName === 'HomeTab') return '🏠';
+  if (routeName === 'AnalyticsTab') return '📊';
+  if (routeName === 'SettingsTab') return '⚙️';
+  return '⬤';
+}
+
+function renderTabLabel({ color }, routeName) {
+  const tabLabelStyle = [styles.tabLabel, { color }];
+  return <Text style={tabLabelStyle}>{getTabLabel(routeName)}</Text>;
+}
+
+function renderTabIcon({ color, size }, routeName) {
+  const tabIconStyle = [styles.tabIcon, { color, fontSize: size }];
+  return <Text style={tabIconStyle}>{getTabIcon(routeName)}</Text>;
+}
+
+function getTabScreenOptions({ route }) {
+  return {
+    headerShown: false,
+    tabBarLabel: (props) => renderTabLabel(props, route.name),
+    tabBarIcon: (props) => renderTabIcon(props, route.name),
+    tabBarActiveTintColor: '#0b3d91',
+    tabBarInactiveTintColor: '#6b7a90',
+  };
+}
+
 // --- Stacks ---
 
 function HomeStack() {
@@ -72,27 +106,7 @@ function SettingsStack() {
 export default function RootNavigator() {
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          tabBarLabel: ({ color }) => {
-            let label = route.name;
-            if (route.name === 'HomeTab') label = 'Home';
-            if (route.name === 'AnalyticsTab') label = 'Analytics';
-            if (route.name === 'SettingsTab') label = 'Settings';
-            return <Text style={{ color, fontSize: 11 }}>{label}</Text>;
-          },
-          tabBarIcon: ({ color, size }) => {
-            let icon = '⬤';
-            if (route.name === 'HomeTab') icon = '🏠';
-            if (route.name === 'AnalyticsTab') icon = '📊';
-            if (route.name === 'SettingsTab') icon = '⚙️';
-            return <Text style={{ color, fontSize: size }}>{icon}</Text>;
-          },
-          tabBarActiveTintColor: '#0b3d91',
-          tabBarInactiveTintColor: '#6b7a90',
-        })}
-      >
+      <Tab.Navigator screenOptions={getTabScreenOptions}>
         <Tab.Screen name="HomeTab" component={HomeStack} />
         <Tab.Screen name="AnalyticsTab" component={AnalyticsStack} />
         <Tab.Screen name="SettingsTab" component={SettingsStack} />
@@ -100,3 +114,10 @@ export default function RootNavigator() {
     </NavigationContainer>
   );
 }
+
+const styles = {
+  tabLabel: {
+    fontSize: 11,
+  },
+  tabIcon: {},
+};

@@ -10,6 +10,7 @@ import {
   saveSettings,
   saveValue,
 } from '../utils/storage';
+import { formatDayString, isNextDay } from '../utils/day';
 import { generateAnalyticsSampleData } from '../utils/sampleData';
 
 const StatContext = createContext();
@@ -50,16 +51,7 @@ const DEFAULT_SETTINGS = {
 };
 
 function todayDate() {
-  return new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-}
-
-function isYesterday(prevDay, currDay) {
-  if (!prevDay) return false;
-  const prev = new Date(prevDay + 'T00:00:00Z');
-  const curr = new Date(currDay + 'T00:00:00Z');
-  const diffMs = curr - prev;
-  const diffDays = diffMs / (1000 * 60 * 60 * 24);
-  return diffDays === 1;
+  return formatDayString(new Date());
 }
 
 export function StatProvider({ children }) {
@@ -292,7 +284,7 @@ export function StatProvider({ children }) {
       nextStreak = 1;
     } else if (habit.lastDoneDate === day) {
       nextStreak = habit.streak || 1;
-    } else if (isYesterday(habit.lastDoneDate, day)) {
+    } else if (isNextDay(habit.lastDoneDate, day)) {
       nextStreak = (habit.streak || 0) + 1;
     } else {
       nextStreak = 1;

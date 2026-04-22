@@ -34,7 +34,7 @@ export default function HabitsScreen({ navigation }) {
         data={habits}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        contentContainerStyle={{ paddingVertical: 12 }}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -49,6 +49,7 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   primaryButtonText: { color: '#fff', fontWeight: '700', fontSize: 15 },
+  listContent: { paddingVertical: 12 },
   card: {
     backgroundColor: '#fff',
     borderRadius: 12,
