@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import {
   Alert,
-  FlatList,
   Modal,
   Pressable,
   ScrollView,
@@ -9,10 +8,32 @@ import {
   Text,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native';
+import Svg, { Circle, Line, Polygon, Text as SvgText } from 'react-native-svg';
 import { useStats } from '../context/StatContext';
-import { formatNumber, formatPercent } from '../utils/numberFormat';
+import { formatNumber } from '../utils/numberFormat';
+
+const RADAR_GRID_LEVELS = 4;
+
+function shortenCoreLabel(name) {
+  const words = name.split(' ').filter(Boolean);
+  if (words.length === 1) return words[0].slice(0, 3).toUpperCase();
+  return words.map((word) => word[0]).join('').slice(0, 3).toUpperCase();
+}
+
+function buildRadarPoints(cores, radius, centerX, centerY, scale) {
+  return cores
+    .map((core, index) => {
+      const angle = (-Math.PI / 2) + (index * Math.PI * 2) / cores.length;
+      const valueRadius = radius * scale(core);
+      const x = centerX + Math.cos(angle) * valueRadius;
+      const y = centerY + Math.sin(angle) * valueRadius;
+      return `${x},${y}`;
+    })
+    .join(' ');
+}
 
 export default function HomeScreen({ navigation }) {
   const {
@@ -23,6 +44,7 @@ export default function HomeScreen({ navigation }) {
     compactNumbers,
     updateScoreTargets,
   } = useStats();
+  const { width: windowWidth } = useWindowDimensions();
   const [editingTarget, setEditingTarget] = useState(null);
   const [targetInput, setTargetInput] = useState('');
 
@@ -34,6 +56,24 @@ export default function HomeScreen({ navigation }) {
     () => (cores.length ? totalScore / cores.length : 0),
     [cores.length, totalScore],
   );
+  const radarChart = useMemo(() => {
+    const chartSize = Math.max(220, Math.min(windowWidth - 64, 280));
+    const center = chartSize / 2;
+    const radius = chartSize * 0.3;
+    const labelRadius = radius + 28;
+    const maxScore = Math.max(...cores.map((core) => core.totalScore || 0), 1);
+    const scale = (core) => (core.totalScore || 0) / maxScore;
+
+    return {
+      chartSize,
+      center,
+      radius,
+      labelRadius,
+      maxScore,
+      scale,
+      polygonPoints: buildRadarPoints(cores, radius, center, center, scale),
+    };
+  }, [cores, windowWidth]);
 
   if (loading) {
     return (
@@ -72,47 +112,6 @@ export default function HomeScreen({ navigation }) {
     }
 
     closeTargetEditor();
-  };
-
-  const renderCore = ({ item, index }) => {
-    const score = item.totalScore || 0;
-    const ratio = averageScoreTarget > 0 ? score / averageScoreTarget : 0;
-    const percentage = formatPercent(ratio * 100);
-    const barWidth = `${Math.min(100, score > 0 ? Math.max(8, ratio * 100) : 0)}%`;
-
-    return (
-      <TouchableOpacity
-        style={styles.coreCard}
-        onPress={() => navigation.navigate('CoreDetail', { id: item.id })}
-      >
-        <View style={styles.coreCardTop}>
-          <View style={[styles.coreIcon, { backgroundColor: item.color || '#3b82f6' }]}>
-            <Text style={styles.coreIconText}>{String(index + 1).padStart(2, '0')}</Text>
-          </View>
-
-          <View style={styles.coreHeader}>
-            <Text style={styles.coreName}>{item.name}</Text>
-            <Text style={styles.coreHint}>Tap to manage this core</Text>
-          </View>
-
-          <View style={styles.coreScoreBadge}>
-            <Text style={styles.coreScore}>{formatNumber(score, { compact: compactNumbers })}</Text>
-            <Text style={styles.coreScoreLabel}>score</Text>
-          </View>
-        </View>
-
-        <View style={styles.coreProgressMeta}>
-          <Text style={styles.coreProgressLabel}>vs Average Score Target</Text>
-          <Text style={styles.coreProgressValue}>{percentage}</Text>
-        </View>
-
-        <View style={styles.barBackground}>
-          <View
-            style={[styles.barFill, { width: barWidth, backgroundColor: item.color || '#3b82f6' }]}
-          />
-        </View>
-      </TouchableOpacity>
-    );
   };
 
   return (
@@ -163,13 +162,126 @@ export default function HomeScreen({ navigation }) {
           <Text style={styles.sectionTitle}>Core Stats (Your Hero Attributes)</Text>
         </View>
 
-        <FlatList
-          data={cores}
-          keyExtractor={(item) => item.id}
-          renderItem={renderCore}
-          scrollEnabled={false}
-          contentContainerStyle={styles.listContent}
-        />
+        <View style={styles.radarCard}>
+          <Text style={styles.radarTitle}>Hero Attribute Radar</Text>
+          <Text style={styles.radarSubtitle}>
+            Each axis maps your current core score relative to your strongest core.
+          </Text>
+
+          {cores.length < 3 ? (
+            <View style={styles.radarEmptyState}>
+              <Text style={styles.radarEmptyTitle}>Add at least 3 cores to shape the radar.</Text>
+              <Text style={styles.radarEmptyText}>
+                Your current cores still appear below and remain tappable.
+              </Text>
+            </View>
+          ) : (
+            <View style={styles.radarStage}>
+              <Svg width={radarChart.chartSize} height={radarChart.chartSize}>
+                {Array.from({ length: RADAR_GRID_LEVELS }, (_, index) => {
+                  const ringRadius = radarChart.radius * ((index + 1) / RADAR_GRID_LEVELS);
+                  const ringPoints = buildRadarPoints(
+                    cores,
+                    ringRadius,
+                    radarChart.center,
+                    radarChart.center,
+                    () => 1,
+                  );
+
+                  return (
+                    <Polygon
+                      key={`ring-${index + 1}`}
+                      points={ringPoints}
+                      fill="none"
+                      stroke="#4b5563"
+                      strokeWidth={index + 1 === RADAR_GRID_LEVELS ? 1.6 : 1}
+                    />
+                  );
+                })}
+
+                {cores.map((core, index) => {
+                  const angle = (-Math.PI / 2) + (index * Math.PI * 2) / cores.length;
+                  const axisX = radarChart.center + Math.cos(angle) * radarChart.radius;
+                  const axisY = radarChart.center + Math.sin(angle) * radarChart.radius;
+
+                  return (
+                    <Line
+                      key={`axis-${core.id}`}
+                      x1={radarChart.center}
+                      y1={radarChart.center}
+                      x2={axisX}
+                      y2={axisY}
+                      stroke="#374151"
+                      strokeWidth="1"
+                    />
+                  );
+                })}
+
+                <Polygon
+                  points={radarChart.polygonPoints}
+                  fill="rgba(255, 47, 160, 0.18)"
+                  stroke="#ff2fa0"
+                  strokeWidth="3"
+                />
+
+                {cores.map((core, index) => {
+                  const angle = (-Math.PI / 2) + (index * Math.PI * 2) / cores.length;
+                  const labelX = radarChart.center + Math.cos(angle) * radarChart.labelRadius;
+                  const labelY = radarChart.center + Math.sin(angle) * radarChart.labelRadius;
+                  const pointX =
+                    radarChart.center + Math.cos(angle) * radarChart.radius * radarChart.scale(core);
+                  const pointY =
+                    radarChart.center + Math.sin(angle) * radarChart.radius * radarChart.scale(core);
+
+                  return (
+                    <React.Fragment key={core.id}>
+                      <Circle cx={pointX} cy={pointY} r="3.5" fill="#ff2fa0" />
+                      <SvgText
+                        x={labelX}
+                        y={labelY}
+                        fill="#9ca3af"
+                        fontSize="12"
+                        fontWeight="700"
+                        textAnchor="middle"
+                        alignmentBaseline="middle"
+                      >
+                        {shortenCoreLabel(core.name)}
+                      </SvgText>
+                    </React.Fragment>
+                  );
+                })}
+              </Svg>
+            </View>
+          )}
+
+          <View style={styles.radarLegend}>
+            {cores.map((core, index) => (
+              <TouchableOpacity
+                key={core.id}
+                style={[styles.radarLegendItem, index > 0 ? styles.radarLegendItemSpaced : null]}
+                onPress={() => navigation.navigate('CoreDetail', { id: core.id })}
+              >
+                <View style={[styles.radarLegendSwatch, { backgroundColor: core.color || '#3b82f6' }]} />
+                <View style={styles.radarLegendText}>
+                  <Text style={styles.radarLegendName}>{core.name}</Text>
+                  <Text style={styles.radarLegendHint}>Tap to manage this core</Text>
+                </View>
+                <View style={styles.radarLegendScoreBadge}>
+                  <Text style={styles.radarLegendScore}>
+                    {formatNumber(core.totalScore || 0, { compact: compactNumbers })}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </View>
+
+          {cores.length >= 3 ? (
+            <Text style={styles.radarMeta}>
+              Strongest core:{' '}
+              {formatNumber(radarChart.maxScore, { compact: compactNumbers })} points
+            </Text>
+          ) : null}
+        </View>
       </ScrollView>
 
       <TouchableOpacity style={styles.quickLogFab} onPress={() => navigation.navigate('QuickLog')}>
@@ -273,57 +385,65 @@ const styles = StyleSheet.create({
   primaryActionTitle: { marginTop: 6, fontSize: 18, fontWeight: '700', color: '#0b3d91' },
   sectionHeader: { marginTop: 12 },
   sectionTitle: { fontSize: 18, fontWeight: '700', color: '#102a43' },
-  listContent: { paddingTop: 6 },
-  coreCard: {
+  radarCard: {
     backgroundColor: '#fff',
     borderRadius: 22,
-    padding: 16,
+    padding: 18,
     marginTop: 12,
     borderWidth: 1,
     borderColor: '#e6eefb',
   },
-  coreCardTop: { flexDirection: 'row', alignItems: 'center' },
-  coreIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 14,
+  radarTitle: { fontSize: 18, fontWeight: '800', color: '#102a43' },
+  radarSubtitle: { marginTop: 6, fontSize: 13, lineHeight: 19, color: '#52637a' },
+  radarStage: {
+    marginTop: 16,
+    borderRadius: 24,
+    paddingVertical: 12,
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 12,
+    backgroundColor: '#05070b',
   },
-  coreIconText: { color: '#fff', fontSize: 15, fontWeight: '800' },
-  coreHeader: { flex: 1 },
-  coreName: { fontSize: 17, fontWeight: '700', color: '#102a43' },
-  coreHint: { marginTop: 4, fontSize: 12, color: '#7b8794' },
-  coreScoreBadge: {
-    backgroundColor: '#f8fbff',
-    borderRadius: 18,
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    alignItems: 'center',
-    minWidth: 72,
-  },
-  coreScore: { fontSize: 20, fontWeight: '800', color: '#0b3d91' },
-  coreScoreLabel: { marginTop: 2, fontSize: 11, fontWeight: '700', color: '#7b8794' },
-  coreProgressMeta: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  radarEmptyState: {
     marginTop: 16,
-    marginBottom: 8,
+    borderRadius: 20,
+    padding: 16,
+    backgroundColor: '#f8fbff',
+    borderWidth: 1,
+    borderColor: '#dbe7fb',
   },
-  coreProgressLabel: { fontSize: 12, fontWeight: '700', color: '#7b8794', textTransform: 'uppercase' },
-  coreProgressValue: { fontSize: 12, fontWeight: '700', color: '#102a43' },
-  barBackground: {
+  radarEmptyTitle: { fontSize: 15, fontWeight: '700', color: '#102a43' },
+  radarEmptyText: { marginTop: 6, fontSize: 13, lineHeight: 19, color: '#52637a' },
+  radarLegend: { marginTop: 14 },
+  radarLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 18,
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    backgroundColor: '#f8fbff',
+    borderWidth: 1,
+    borderColor: '#e6eefb',
+  },
+  radarLegendItemSpaced: { marginTop: 10 },
+  radarLegendSwatch: {
+    width: 12,
     height: 12,
     borderRadius: 999,
-    backgroundColor: '#e8effa',
-    overflow: 'hidden',
+    marginRight: 12,
   },
-  barFill: {
-    height: '100%',
-    borderRadius: 999,
+  radarLegendText: { flex: 1 },
+  radarLegendName: { fontSize: 15, fontWeight: '700', color: '#102a43' },
+  radarLegendHint: { marginTop: 2, fontSize: 12, color: '#7b8794' },
+  radarLegendScoreBadge: {
+    backgroundColor: '#ffffff',
+    borderRadius: 18,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    alignItems: 'center',
+    minWidth: 78,
   },
+  radarLegendScore: { fontSize: 15, fontWeight: '800', color: '#0b3d91' },
+  radarMeta: { marginTop: 14, fontSize: 12, fontWeight: '700', color: '#7b8794' },
   quickLogFab: {
     position: 'absolute',
     right: 16,
