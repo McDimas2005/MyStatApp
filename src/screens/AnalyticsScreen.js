@@ -1,12 +1,11 @@
 import React, { useMemo } from 'react';
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { BarChart } from 'react-native-chart-kit';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import CoreBalanceChart from '../components/CoreBalanceChart';
+import CoreBarChart from '../components/CoreBarChart';
 import CoreRadarChart from '../components/CoreRadarChart';
 import { useStats } from '../context/StatContext';
 import { getCoreStreakSummary } from '../utils/coreStreaks';
 import { formatNumber } from '../utils/numberFormat';
-
-const screenWidth = Dimensions.get('window').width;
 
 export default function AnalyticsScreen({ navigation }) {
   const { cores, skills, habits, events, averageScoreTarget, compactNumbers } = useStats();
@@ -54,19 +53,6 @@ export default function AnalyticsScreen({ navigation }) {
     { key: 'habits', label: 'Total Habits', value: habits.length, accent: '#f59e0b' },
   ];
 
-  const chartConfig = {
-    backgroundColor: '#ffffff',
-    backgroundGradientFrom: '#ffffff',
-    backgroundGradientTo: '#ffffff',
-    decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(11, 61, 145, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(36, 59, 83, ${opacity})`,
-    barPercentage: 0.6,
-    propsForBackgroundLines: {
-      stroke: '#e5edf9',
-    },
-  };
-
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <View style={styles.heroCard}>
@@ -94,11 +80,19 @@ export default function AnalyticsScreen({ navigation }) {
         ))}
       </View>
 
-      <Text style={styles.sectionTitle}>Core Score Distribution</Text>
       {cores.length === 0 ? (
         <Text style={styles.empty}>No cores found.</Text>
       ) : (
         <>
+          <Text style={styles.sectionTitle}>Core Balance Portion</Text>
+          <CoreBalanceChart
+            cores={cores}
+            totalScore={totalScore}
+            compactNumbers={compactNumbers}
+            style={styles.balanceChartCard}
+          />
+
+          <Text style={styles.sectionTitle}>Core Score Distribution</Text>
           <View style={styles.chartWrapper}>
             <View style={styles.chartHeader}>
               <Text style={styles.chartTitle}>Core Score Distribution</Text>
@@ -106,18 +100,11 @@ export default function AnalyticsScreen({ navigation }) {
                 Each bar shows % of the average score target {formatNumber(averageScoreTarget, { compact: compactNumbers })}.
               </Text>
             </View>
-            <BarChart
-              data={{
-                labels: coreData.labels,
-                datasets: [{ data: coreData.data }],
-              }}
-              width={screenWidth - 48}
-              height={260}
-              chartConfig={chartConfig}
-              fromZero
-              showValuesOnTopOfBars
+            <CoreBarChart
+              cores={cores}
+              values={coreData.data}
+              valueFormatter={(value) => `${value}%`}
               yAxisSuffix="%"
-              style={styles.chart}
             />
           </View>
 
@@ -130,7 +117,8 @@ export default function AnalyticsScreen({ navigation }) {
               compact: compactNumbers,
             })} points.`}
             style={styles.analyticsRadarCard}
-            onPressCore={(core) => navigation.navigate('CoreDetail', { id: core.id })}
+            showLegend={false}
+            enablePointTooltip
           />
 
           <View style={[styles.chartWrapper, styles.chartWrapperSpaced]}>
@@ -138,17 +126,10 @@ export default function AnalyticsScreen({ navigation }) {
               <Text style={styles.chartTitle}>Core Total Scores</Text>
               <Text style={styles.chartSubtitle}>Each bar shows the current total score of each core.</Text>
             </View>
-            <BarChart
-              data={{
-                labels: totalScoreChartData.labels,
-                datasets: [{ data: totalScoreChartData.data }],
-              }}
-              width={screenWidth - 48}
-              height={260}
-              chartConfig={chartConfig}
-              fromZero
-              showValuesOnTopOfBars
-              style={styles.chart}
+            <CoreBarChart
+              cores={cores}
+              values={totalScoreChartData.data}
+              valueFormatter={(value) => formatNumber(value, { compact: compactNumbers })}
             />
           </View>
         </>
@@ -287,7 +268,7 @@ const styles = StyleSheet.create({
   chartHeader: { width: '100%', paddingHorizontal: 6, paddingTop: 8, marginBottom: 8 },
   chartTitle: { fontSize: 16, fontWeight: '700', color: '#102a43' },
   chartSubtitle: { marginTop: 4, fontSize: 12, color: '#6b7a90' },
-  chart: { borderRadius: 12 },
+  balanceChartCard: { marginTop: 8 },
   analyticsRadarCard: { marginTop: 12 },
   streakCard: {
     marginTop: 10,

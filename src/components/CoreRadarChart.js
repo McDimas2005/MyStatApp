@@ -1,5 +1,12 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, useWindowDimensions, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  Pressable,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from 'react-native';
 import Svg, { Circle, Line, Polygon, Text as SvgText } from 'react-native-svg';
 import { formatNumber } from '../utils/numberFormat';
 
@@ -43,12 +50,14 @@ export default function CoreRadarChart({
   style,
   onPressCore,
   showLegend = true,
+  enablePointTooltip = false,
 }) {
   const { width: windowWidth } = useWindowDimensions();
   const targetValue = averageScoreTarget > 0 ? averageScoreTarget : 1;
   const hasEnoughCores = cores.length >= 3;
   const hasValidTarget = averageScoreTarget > 0;
   const hasCoresOverTarget = cores.some((core) => (core.totalScore || 0) > targetValue);
+  const [selectedCoreId, setSelectedCoreId] = useState(null);
 
   const chart = useMemo(() => {
     const chartSize = Math.max(220, Math.min(windowWidth - 96, 280));
@@ -66,6 +75,36 @@ export default function CoreRadarChart({
       scale,
     };
   }, [cores, targetValue, windowWidth]);
+
+  useEffect(() => {
+    if (!enablePointTooltip || !hasEnoughCores || !hasValidTarget) {
+      setSelectedCoreId(null);
+      return;
+    }
+
+    setSelectedCoreId((currentId) => {
+      return currentId && cores.some((core) => core.id === currentId) ? currentId : null;
+    });
+  }, [cores, enablePointTooltip, hasEnoughCores, hasValidTarget]);
+
+  const pointPositions = useMemo(
+    () =>
+      cores.map((core, index) => {
+        const angle = (-Math.PI / 2) + (index * Math.PI * 2) / cores.length;
+        const pointX = chart.center + Math.cos(angle) * chart.radius * chart.scale(core);
+        const pointY = chart.center + Math.sin(angle) * chart.radius * chart.scale(core);
+        const labelX = chart.center + Math.cos(angle) * chart.labelRadius;
+        const labelY = chart.center + Math.sin(angle) * chart.labelRadius;
+
+        return { core, angle, pointX, pointY, labelX, labelY };
+      }),
+    [chart, cores],
+  );
+
+  const selectedPoint = useMemo(
+    () => pointPositions.find(({ core }) => core.id === selectedCoreId) || null,
+    [pointPositions, selectedCoreId],
+  );
 
   const resolvedSubtitle =
     subtitle ||
@@ -89,7 +128,7 @@ export default function CoreRadarChart({
         </View>
       ) : (
         <View style={styles.stage}>
-          <Svg width={chart.chartSize} height={chart.chartSize}>
+          <Svg pointerEvents="none" width={chart.chartSize} height={chart.chartSize}>
             {Array.from({ length: RADAR_GRID_LEVELS }, (_, index) => {
               const ringRadius = chart.radius * ((index + 1) / RADAR_GRID_LEVELS);
               const ringPoints = buildRadarPoints(
@@ -111,8 +150,7 @@ export default function CoreRadarChart({
               );
             })}
 
-            {cores.map((core, index) => {
-              const angle = (-Math.PI / 2) + (index * Math.PI * 2) / cores.length;
+            {pointPositions.map(({ core, angle }) => {
               const axisX = chart.center + Math.cos(angle) * chart.radius;
               const axisY = chart.center + Math.sin(angle) * chart.radius;
 
@@ -138,20 +176,21 @@ export default function CoreRadarChart({
 
             <Circle cx={chart.center} cy={chart.center} r="4" fill={RADAR_COLORS.center} />
 
-            {cores.map((core, index) => {
-              const angle = (-Math.PI / 2) + (index * Math.PI * 2) / cores.length;
-              const labelX = chart.center + Math.cos(angle) * chart.labelRadius;
-              const labelY = chart.center + Math.sin(angle) * chart.labelRadius;
-              const pointX = chart.center + Math.cos(angle) * chart.radius * chart.scale(core);
-              const pointY = chart.center + Math.sin(angle) * chart.radius * chart.scale(core);
+            {pointPositions.map(({ core, pointX, pointY, labelX, labelY }) => {
+              const isSelected = core.id === selectedCoreId;
 
               return (
                 <React.Fragment key={core.id}>
-                  <Circle cx={pointX} cy={pointY} r="4.5" fill={RADAR_COLORS.point} />
+                  <Circle
+                    cx={pointX}
+                    cy={pointY}
+                    r={isSelected ? '6' : '4.5'}
+                    fill={core.color || RADAR_COLORS.point}
+                  />
                   <SvgText
                     x={labelX}
                     y={labelY}
-                    fill={RADAR_COLORS.label}
+                    fill={core.color || RADAR_COLORS.label}
                     fontSize="12"
                     fontWeight="700"
                     textAnchor="middle"
@@ -163,6 +202,66 @@ export default function CoreRadarChart({
               );
             })}
           </Svg>
+
+          {enablePointTooltip ? (
+            <Pressable
+              style={StyleSheet.absoluteFill}
+              onPress={() => setSelectedCoreId(null)}
+            />
+          ) : null}
+
+          {enablePointTooltip
+            ? pointPositions.map(({ core, pointX, pointY }) => (
+                <Pressable
+                  key={`hit-${core.id}`}
+                  style={[
+                    styles.pointHitTarget,
+                    {
+                      left: pointX - 20,
+                      top: pointY - 20,
+                    },
+                  ]}
+                  onPress={() =>
+                    setSelectedCoreId((currentId) => (currentId === core.id ? null : core.id))
+                  }
+                />
+              ))
+            : null}
+
+          {selectedPoint ? (
+            <View
+              style={[
+                styles.tooltip,
+                {
+                  left: Math.max(
+                    12,
+                    Math.min(selectedPoint.pointX - 54, chart.chartSize - 120),
+                  ),
+                  top: Math.max(
+                    10,
+                    Math.min(selectedPoint.pointY - 56, chart.chartSize - 64),
+                  ),
+                },
+              ]}
+            >
+              <View style={styles.tooltipHeader}>
+                <Text style={styles.tooltipTitle}>{selectedPoint.core.name}</Text>
+                <Pressable
+                  hitSlop={8}
+                  onPress={() => setSelectedCoreId(null)}
+                  style={styles.tooltipCloseButton}
+                >
+                  <Text style={styles.tooltipCloseText}>x</Text>
+                </Pressable>
+              </View>
+              <Text style={styles.tooltipValue}>
+                {formatNumber(selectedPoint.core.totalScore || 0, {
+                  compact: compactNumbers,
+                })}{' '}
+                pts
+              </Text>
+            </View>
+          ) : null}
         </View>
       )}
 
@@ -235,9 +334,16 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
+    position: 'relative',
     backgroundColor: RADAR_COLORS.panel,
     borderWidth: 1,
     borderColor: RADAR_COLORS.border,
+  },
+  pointHitTarget: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   emptyState: {
     marginTop: 16,
@@ -280,4 +386,35 @@ const styles = StyleSheet.create({
   },
   legendScore: { fontSize: 15, fontWeight: '800', color: '#0b3d91' },
   meta: { marginTop: 14, fontSize: 12, fontWeight: '700', color: '#7b8794' },
+  tooltip: {
+    position: 'absolute',
+    minWidth: 108,
+    backgroundColor: '#ffffff',
+    borderRadius: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#dbe7fb',
+    shadowColor: '#0f172a',
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 3,
+  },
+  tooltipHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  tooltipTitle: { fontSize: 12, fontWeight: '700', color: '#102a43' },
+  tooltipValue: { marginTop: 2, fontSize: 12, fontWeight: '800', color: '#0b3d91' },
+  tooltipCloseButton: {
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#eef4ff',
+    marginLeft: 10,
+  },
+  tooltipCloseText: { fontSize: 13, fontWeight: '800', color: '#0b3d91' },
 });
