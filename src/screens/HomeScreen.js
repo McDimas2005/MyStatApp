@@ -16,6 +16,17 @@ import { useStats } from '../context/StatContext';
 import { formatNumber } from '../utils/numberFormat';
 
 const RADAR_GRID_LEVELS = 4;
+const RADAR_COLORS = {
+  panel: '#f8fbff',
+  border: '#dbe7fb',
+  grid: '#c8d6f0',
+  axis: '#9fb6dc',
+  stroke: '#0b3d91',
+  fill: 'rgba(11, 61, 145, 0.14)',
+  point: '#0b3d91',
+  label: '#52637a',
+  center: '#0b3d91',
+};
 
 function shortenCoreLabel(name) {
   const words = name.split(' ').filter(Boolean);
@@ -193,7 +204,7 @@ export default function HomeScreen({ navigation }) {
                       key={`ring-${index + 1}`}
                       points={ringPoints}
                       fill="none"
-                      stroke="#4b5563"
+                      stroke={RADAR_COLORS.grid}
                       strokeWidth={index + 1 === RADAR_GRID_LEVELS ? 1.6 : 1}
                     />
                   );
@@ -211,7 +222,7 @@ export default function HomeScreen({ navigation }) {
                       y1={radarChart.center}
                       x2={axisX}
                       y2={axisY}
-                      stroke="#374151"
+                      stroke={RADAR_COLORS.axis}
                       strokeWidth="1"
                     />
                   );
@@ -219,9 +230,16 @@ export default function HomeScreen({ navigation }) {
 
                 <Polygon
                   points={radarChart.polygonPoints}
-                  fill="rgba(255, 47, 160, 0.18)"
-                  stroke="#ff2fa0"
+                  fill={RADAR_COLORS.fill}
+                  stroke={RADAR_COLORS.stroke}
                   strokeWidth="3"
+                />
+
+                <Circle
+                  cx={radarChart.center}
+                  cy={radarChart.center}
+                  r="4"
+                  fill={RADAR_COLORS.center}
                 />
 
                 {cores.map((core, index) => {
@@ -235,11 +253,11 @@ export default function HomeScreen({ navigation }) {
 
                   return (
                     <React.Fragment key={core.id}>
-                      <Circle cx={pointX} cy={pointY} r="3.5" fill="#ff2fa0" />
+                      <Circle cx={pointX} cy={pointY} r="4.5" fill={RADAR_COLORS.point} />
                       <SvgText
                         x={labelX}
                         y={labelY}
-                        fill="#9ca3af"
+                        fill={RADAR_COLORS.label}
                         fontSize="12"
                         fontWeight="700"
                         textAnchor="middle"
@@ -398,10 +416,12 @@ const styles = StyleSheet.create({
   radarStage: {
     marginTop: 16,
     borderRadius: 24,
-    paddingVertical: 12,
+    paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#05070b',
+    backgroundColor: RADAR_COLORS.panel,
+    borderWidth: 1,
+    borderColor: RADAR_COLORS.border,
   },
   radarEmptyState: {
     marginTop: 16,
