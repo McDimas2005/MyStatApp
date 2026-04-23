@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-    android:description="@string/widget_description"
-    android:initialLayout="@layout/my_stat_widget_radar_total_average_4x2"
+    android:description="@string/widget_radar_average_quick_log_4x2_description"
+    android:initialLayout="@layout/my_stat_widget_radar_average_quick_log_4x2"
     android:minHeight="148dp"
     android:minWidth="250dp"
-    android:previewLayout="@layout/my_stat_widget_radar_total_average_4x2"
+    android:previewLayout="@layout/my_stat_widget_radar_average_quick_log_4x2"
     android:targetCellHeight="2"
     android:targetCellWidth="4"
     android:updatePeriodMillis="0"
