@@ -68,3 +68,5 @@
 108417	151589	1776894748209801909	rnsvg_autolinked_build/CMakeFiles/react_codegen_rnsvg.dir/home/mcdimas/projects/mystat-app/MyStatApp/node_modules/react-native-svg/android/build/generated/source/codegen/jni/react/renderer/components/rnsvg/Props.cpp.o	e483770fd436315c
 151590	152905	1776894749642009405	/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/RelWithDebInfo/6e5m5x5a/obj/x86_64/libreact_codegen_rnsvg.so	fca3495176947360
 152905	154358	1776894751103099922	/home/mcdimas/projects/mystat-app/MyStatApp/android/app/build/intermediates/cxx/RelWithDebInfo/6e5m5x5a/obj/x86_64/libappmodules.so	a572c34f08d7a82a
+558	710	0	/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/RelWithDebInfo/6e5m5x5a/x86_64/CMakeFiles/cmake.verify_globs	10110a77104c22c8
+555	655	0	/home/mcdimas/projects/mystat-app/MyStatApp/android/app/.cxx/RelWithDebInfo/6e5m5x5a/x86_64/CMakeFiles/cmake.verify_globs	10110a77104c22c8

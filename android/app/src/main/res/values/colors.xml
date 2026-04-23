@@ -1,0 +1,15 @@
+<resources>
+    <color name="widget_surface_start">#F4FAFF</color>
+    <color name="widget_surface_end">#D7E8FF</color>
+    <color name="widget_surface_stroke">#8BC3F7</color>
+    <color name="widget_chip_fill">#F9FCFF</color>
+    <color name="widget_chip_stroke">#B8D8FB</color>
+    <color name="widget_outline_stroke">#DCEBFF</color>
+    <color name="widget_status_fill">#0F335F</color>
+    <color name="widget_radar_start">#173D6F</color>
+    <color name="widget_radar_end">#0B2749</color>
+    <color name="widget_radar_stroke">#6EB7FF</color>
+    <color name="widget_text_primary">#102A43</color>
+    <color name="widget_text_secondary">#486581</color>
+    <color name="widget_text_inverse">#F8FBFF</color>
+</resources>

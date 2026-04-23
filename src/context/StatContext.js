@@ -12,6 +12,8 @@ import {
 } from '../utils/storage';
 import { formatDayString, isNextDay } from '../utils/day';
 import { generateAnalyticsSampleData } from '../utils/sampleData';
+import { buildWidgetPayload } from '../utils/widgetPayload';
+import { syncMyStatWidget } from '../utils/widgetBridge';
 
 const StatContext = createContext();
 
@@ -145,6 +147,18 @@ export function StatProvider({ children }) {
     if (loading) return;
     saveSettings(settings).catch((e) => console.warn('Failed to save settings', e));
   }, [settings, loading]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    syncMyStatWidget(
+      buildWidgetPayload({
+        cores,
+        averageScoreTarget: settings.averageScoreTarget,
+        compactNumbers: settings.compactNumbers,
+      }),
+    ).catch((e) => console.warn('Failed to sync widget', e));
+  }, [cores, loading, settings.averageScoreTarget, settings.compactNumbers]);
 
   // ID helpers
   const createId = (prefix, name) =>
