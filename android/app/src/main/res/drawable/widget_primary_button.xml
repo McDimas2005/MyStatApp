@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="0"
+        android:endColor="@color/widget_button_end"
+        android:startColor="@color/widget_button_start" />
+    <corners android:radius="18dp" />
+    <stroke
+        android:width="1dp"
+        android:color="@color/widget_button_stroke" />
+</shape>

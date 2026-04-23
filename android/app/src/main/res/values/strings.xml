@@ -4,12 +4,10 @@
     <string name="widget_eyebrow">MYSTAT SNAPSHOT</string>
     <string name="widget_total_caption">Total score</string>
     <string name="widget_average_caption">Average</string>
+    <string name="widget_quick_log_cta">Quick Log</string>
     <string name="widget_placeholder_value">0</string>
     <string name="widget_empty_helper">Open the app once to sync the widget.</string>
-    <string name="widget_status_empty">Awaiting sync</string>
-    <string name="widget_status_partial">Need 3+ cores</string>
-    <string name="widget_status_ready">%1$d cores live</string>
-    <string name="widget_partial_helper">%1$d core entries synced. Add at least 3 cores to unlock the live radar.</string>
-    <string name="widget_helper_format">Outer ring target %1$s · %2$d cores tracked</string>
+    <string name="widget_partial_helper">Add at least 3 cores to unlock the full live radar view.</string>
+    <string name="widget_helper_format">Outer ring target %1$s</string>
     <string name="widget_radar_content_description">MyStat radar widget chart</string>
 </resources>
