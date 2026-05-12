@@ -12,6 +12,9 @@ import {
 } from '../utils/storage';
 import { formatDayString, isNextDay } from '../utils/day';
 import { generateAnalyticsSampleData } from '../utils/sampleData';
+import { buildWidgetPayload } from '../utils/widgetPayload';
+import { syncMyStatWidget } from '../utils/widgetBridge';
+import { exportBackupFile, importBackupFile } from '../utils/backupBridge';
 
 const StatContext = createContext();
 
@@ -49,6 +52,8 @@ const DEFAULT_SETTINGS = {
   averageScoreTarget: 1000,
   compactNumbers: true,
 };
+
+const BACKUP_VERSION = 1;
 
 function todayDate() {
   return formatDayString(new Date());
@@ -145,6 +150,18 @@ export function StatProvider({ children }) {
     if (loading) return;
     saveSettings(settings).catch((e) => console.warn('Failed to save settings', e));
   }, [settings, loading]);
+
+  useEffect(() => {
+    if (loading) return;
+
+    syncMyStatWidget(
+      buildWidgetPayload({
+        cores,
+        averageScoreTarget: settings.averageScoreTarget,
+        compactNumbers: settings.compactNumbers,
+      }),
+    ).catch((e) => console.warn('Failed to sync widget', e));
+  }, [cores, loading, settings.averageScoreTarget, settings.compactNumbers]);
 
   // ID helpers
   const createId = (prefix, name) =>
@@ -431,6 +448,112 @@ export function StatProvider({ children }) {
     setHasSampleBackup(false);
   }
 
+  function buildProgressBackup() {
+    return {
+      app: 'MyStatApp',
+      backupVersion: BACKUP_VERSION,
+      exportedAt: new Date().toISOString(),
+      data: {
+        cores,
+        skills,
+        habits,
+        events,
+        settings,
+      },
+    };
+  }
+
+  function createBackupFileName() {
+    const day = formatDayString(new Date());
+    return `mystat-backup-${day}.json`;
+  }
+
+  async function exportProgressBackup() {
+    const backup = buildProgressBackup();
+    const json = JSON.stringify(backup, null, 2);
+    const uri = await exportBackupFile(json, createBackupFileName());
+    return {
+      uri,
+      coreCount: cores.length,
+      skillCount: skills.length,
+      habitCount: habits.length,
+      eventCount: events.length,
+    };
+  }
+
+  function normalizeBackupPayload(rawBackup) {
+    if (!rawBackup || typeof rawBackup !== 'object') {
+      throw new Error('The selected file is not a valid MyStat backup.');
+    }
+
+    if (rawBackup.app !== 'MyStatApp') {
+      throw new Error('This file was not exported from MyStatApp.');
+    }
+
+    if (rawBackup.backupVersion !== BACKUP_VERSION) {
+      throw new Error('This backup version is not supported by this app build.');
+    }
+
+    const data = rawBackup.data;
+    if (!data || typeof data !== 'object') {
+      throw new Error('The backup file is missing its progress data.');
+    }
+
+    const nextCores = Array.isArray(data.cores) ? data.cores : null;
+    const nextSkills = Array.isArray(data.skills) ? data.skills : null;
+    const nextHabits = Array.isArray(data.habits) ? data.habits : null;
+    const nextEvents = Array.isArray(data.events) ? data.events : null;
+
+    if (!nextCores || !nextSkills || !nextHabits || !nextEvents) {
+      throw new Error('The backup file has an invalid progress data format.');
+    }
+
+    return {
+      cores: nextCores,
+      skills: nextSkills,
+      habits: nextHabits,
+      events: nextEvents,
+      settings: { ...DEFAULT_SETTINGS, ...(data.settings || {}) },
+      exportedAt: rawBackup.exportedAt,
+    };
+  }
+
+  async function importProgressBackup() {
+    const rawJson = await importBackupFile();
+    let parsed;
+    try {
+      parsed = JSON.parse(rawJson);
+    } catch (_error) {
+      throw new Error('The selected file is not valid JSON.');
+    }
+
+    const backup = normalizeBackupPayload(parsed);
+
+    await Promise.all([
+      saveList(KEYS.cores, backup.cores),
+      saveList(KEYS.skills, backup.skills),
+      saveList(KEYS.habits, backup.habits),
+      saveList(KEYS.events, backup.events),
+      saveSettings(backup.settings),
+      removeValue(KEYS.sampleBackup),
+    ]);
+
+    setCores(backup.cores);
+    setSkills(backup.skills);
+    setHabits(backup.habits);
+    setEvents(backup.events);
+    setSettings(backup.settings);
+    setHasSampleBackup(false);
+
+    return {
+      exportedAt: backup.exportedAt,
+      coreCount: backup.cores.length,
+      skillCount: backup.skills.length,
+      habitCount: backup.habits.length,
+      eventCount: backup.events.length,
+    };
+  }
+
   function updateScoreTargets({ totalScoreTarget, averageScoreTarget }) {
     setSettings((prev) => ({
       ...prev,
@@ -473,6 +596,8 @@ export function StatProvider({ children }) {
     resetProgress,
     applyAnalyticsSampleData,
     restoreRealData,
+    exportProgressBackup,
+    importProgressBackup,
     updateScoreTargets,
     updateSettings,
   };

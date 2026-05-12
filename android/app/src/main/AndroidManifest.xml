@@ -22,6 +22,91 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>
+        <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data
+                android:scheme="mystat"
+                android:host="app" />
+        </intent-filter>
       </activity>
+      <receiver
+        android:name=".widget.MyStatHomeWidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_radar_total_average_4x2_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.MyStatRadar2x2WidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_radar_2x2_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_radar_2x2_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.MyStatPie2x2WidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_pie_2x2_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_pie_2x2_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.MyStatRadarAverageQuickLog4x2WidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_radar_average_quick_log_4x2_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_radar_average_quick_log_4x2_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.MyStatRadarScoreQuickLog4x3WidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_radar_score_quick_log_4x3_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_radar_score_quick_log_4x3_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.MyStatTargetProgress4x4WidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_target_progress_4x4_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_target_progress_4x4_info" />
+      </receiver>
+      <receiver
+        android:name=".widget.MyStatTotalProgress4x4WidgetProvider"
+        android:exported="true"
+        android:label="@string/widget_total_progress_4x4_label">
+        <intent-filter>
+          <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+        </intent-filter>
+        <meta-data
+          android:name="android.appwidget.provider"
+          android:resource="@xml/my_stat_widget_total_progress_4x4_info" />
+      </receiver>
     </application>
 </manifest>

@@ -1,14 +1,17 @@
-import React from 'react';
-import { View, Button, Alert, StyleSheet, Text, Switch } from 'react-native';
+import React, { useState } from 'react';
+import { View, Button, Alert, StyleSheet, Text, Switch, ScrollView } from 'react-native';
 import { useStats } from '../context/StatContext';
 
 export default function SettingsScreen() {
+  const [backupBusy, setBackupBusy] = useState(false);
   const {
     resetAll,
     resetProgress,
     hasSampleBackup,
     applyAnalyticsSampleData,
     restoreRealData,
+    exportProgressBackup,
+    importProgressBackup,
     compactNumbers,
     updateSettings,
   } = useStats();
@@ -34,8 +37,55 @@ export default function SettingsScreen() {
     }
   };
 
+  const handleExportBackup = async () => {
+    setBackupBusy(true);
+    try {
+      const summary = await exportProgressBackup();
+      Alert.alert(
+        'Progress exported',
+        `Saved ${summary.coreCount} cores, ${summary.skillCount} skills, ${summary.habitCount} habits, and ${summary.eventCount} log events to a JSON backup file.`,
+      );
+    } catch (e) {
+      if (e?.message !== 'Backup export was cancelled.') {
+        Alert.alert('Export failed', e.message);
+      }
+    } finally {
+      setBackupBusy(false);
+    }
+  };
+
+  const handleImportBackup = () => {
+    Alert.alert(
+      'Import progress backup?',
+      'This will replace the current cores, skills, habits, log history, and settings on this device.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Import',
+          style: 'destructive',
+          onPress: async () => {
+            setBackupBusy(true);
+            try {
+              const summary = await importProgressBackup();
+              Alert.alert(
+                'Progress restored',
+                `Restored ${summary.coreCount} cores, ${summary.skillCount} skills, ${summary.habitCount} habits, and ${summary.eventCount} log events from the backup file.`,
+              );
+            } catch (e) {
+              if (e?.message !== 'Backup import was cancelled.') {
+                Alert.alert('Import failed', e.message);
+              }
+            } finally {
+              setBackupBusy(false);
+            }
+          },
+        },
+      ],
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
       <View style={styles.card}>
         <Text style={styles.title}>Number Display</Text>
         <Text style={styles.description}>
@@ -55,6 +105,25 @@ export default function SettingsScreen() {
             thumbColor={compactNumbers ? '#0b3d91' : '#f8fafc'}
           />
         </View>
+      </View>
+
+      <View style={styles.card}>
+        <Text style={styles.title}>Progress Backup</Text>
+        <Text style={styles.description}>
+          Export a MyStat JSON backup file, then import it later to recover your progress on this device.
+        </Text>
+        <Button
+          title={backupBusy ? 'Working...' : 'Export Progress Backup'}
+          onPress={handleExportBackup}
+          disabled={backupBusy}
+        />
+        <View style={styles.spacer} />
+        <Button
+          title="Import Progress Backup"
+          color="#0b3d91"
+          onPress={handleImportBackup}
+          disabled={backupBusy}
+        />
       </View>
 
       <View style={styles.card}>
@@ -100,12 +169,13 @@ export default function SettingsScreen() {
           }}
         />
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 16, backgroundColor: '#f7f9fd' },
+  contentContainer: { paddingBottom: 24 },
   card: {
     backgroundColor: '#ffffff',
     borderRadius: 20,

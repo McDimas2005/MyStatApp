@@ -1,3 +1,29 @@
 <resources>
     <string name="app_name">MyStatApp</string>
+    <string name="widget_description">Home screen snapshot with MyStat radar, average score, and total score.</string>
+    <string name="widget_radar_2x2_label">MyStat Radar 2x2</string>
+    <string name="widget_pie_2x2_label">MyStat Pie 2x2</string>
+    <string name="widget_radar_total_average_4x2_label">MyStat Scores 4x2</string>
+    <string name="widget_radar_average_quick_log_4x2_label">MyStat Quick 4x2</string>
+    <string name="widget_radar_score_quick_log_4x3_label">MyStat Quick 4x3</string>
+    <string name="widget_target_progress_4x4_label">MyStat Target 4x4</string>
+    <string name="widget_total_progress_4x4_label">MyStat Totals 4x4</string>
+    <string name="widget_radar_2x2_description">Fixed 2x2 MyStat radar chart widget.</string>
+    <string name="widget_pie_2x2_description">Fixed 2x2 MyStat average target pie widget.</string>
+    <string name="widget_radar_average_quick_log_4x2_description">Fixed 4x2 MyStat radar, average, and quick log widget.</string>
+    <string name="widget_radar_score_quick_log_4x3_description">Fixed 4x3 MyStat radar, scores, and quick log widget.</string>
+    <string name="widget_target_progress_4x4_description">Fixed 4x4 MyStat core target progress widget.</string>
+    <string name="widget_total_progress_4x4_description">Fixed 4x4 MyStat core total progress widget.</string>
+    <string name="widget_eyebrow">MYSTAT SNAPSHOT</string>
+    <string name="widget_total_caption">Total score</string>
+    <string name="widget_average_caption">Average</string>
+    <string name="widget_quick_log_cta">Quick Log</string>
+    <string name="widget_placeholder_value">0</string>
+    <string name="widget_empty_helper">Open the app once to sync the widget.</string>
+    <string name="widget_partial_helper">Add at least 3 cores to unlock the full live radar view.</string>
+    <string name="widget_helper_format">Outer ring target %1$s</string>
+    <string name="widget_radar_content_description">MyStat radar widget chart</string>
+    <string name="widget_pie_content_description">MyStat average target pie chart</string>
+    <string name="widget_target_progress_content_description">MyStat core percentage progress bars</string>
+    <string name="widget_total_progress_content_description">MyStat core total score progress bars</string>
 </resources>

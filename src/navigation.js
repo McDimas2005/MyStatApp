@@ -24,6 +24,30 @@ const AnalyticsStackNav = createNativeStackNavigator();
 const SettingsStackNav = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const linking = {
+  prefixes: ['mystat://'],
+  config: {
+    screens: {
+      HomeTab: {
+        screens: {
+          HomeMain: 'home',
+          QuickLog: 'app/quick-log',
+        },
+      },
+      AnalyticsTab: {
+        screens: {
+          AnalyticsMain: 'analytics',
+        },
+      },
+      SettingsTab: {
+        screens: {
+          SettingsMain: 'settings',
+        },
+      },
+    },
+  },
+};
+
 function getTabLabel(routeName) {
   if (routeName === 'HomeTab') return 'Home';
   if (routeName === 'AnalyticsTab') return 'Analytics';
@@ -105,7 +129,7 @@ function SettingsStack() {
 
 export default function RootNavigator() {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Tab.Navigator screenOptions={getTabScreenOptions}>
         <Tab.Screen name="HomeTab" component={HomeStack} />
         <Tab.Screen name="AnalyticsTab" component={AnalyticsStack} />
