@@ -7,7 +7,10 @@ import com.facebook.react.uimanager.ViewManager
 
 class MyStatWidgetPackage : ReactPackage {
   override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
-    return listOf(MyStatWidgetModule(reactContext))
+    return listOf(
+      MyStatWidgetModule(reactContext),
+      MyStatBackupModule(reactContext),
+    )
   }
 
   override fun createViewManagers(
