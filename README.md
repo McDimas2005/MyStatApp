@@ -1,97 +1,325 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# MyStatApp
 
-# Getting Started
+MyStatApp is a React Native habit and self-stat tracking app built around a three-level model:
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+- `Core` -> high-level life domain
+- `Skill` -> capability inside a core
+- `Habit` -> daily action that earns points
 
-## Step 1: Start Metro
+The app tracks score accumulation, streaks, target progress, analytics views, local backups, and Android home screen widgets.
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+## Project Snapshot
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+| Item | Value |
+| --- | --- |
+| App name | `MyStatApp` |
+| Package / bundle id | `com.dimascorp.mystat` |
+| Version | npm `0.0.1`, Android `1.0 (code 1)` |
+| Framework | React Native CLI |
+| React Native | `0.82.1` |
+| React | `19.1.1` |
+| Node.js | `>=20` |
+| Android SDK | min `24`, compile `36`, target `36` |
+| iOS | Native iOS project included in `ios/` |
+
+## What The App Does
+
+### Core product flow
+
+1. Create or edit `cores`
+2. Create `skills` under each core
+3. Create `habits` under each skill
+4. Log habit activity with a metric amount
+5. Convert the logged amount into points using the habit `scale`
+6. Roll points upward into habit, skill, and core totals
+
+### Current implemented features
+
+- Persistent local data with AsyncStorage
+- Seeded default cores and skills on first launch
+- Home dashboard with total score, average score, editable score targets, and radar chart
+- Quick Log screen for fast daily logging across all habits
+- Core, skill, and habit CRUD flows
+- Streak tracking with current streak, best streak, completed day counts, and core streak calendar
+- Analytics screen with:
+  - radar chart
+  - score distribution bars
+  - total score bars
+  - balance breakdown
+  - per-core streak summaries
+- Compact number formatting toggle (`10K`, `1.2M`, etc.)
+- Export/import progress backup as MyStat JSON
+- Generated 21-day analytics sample mode with restore path back to real data
+- Deep link support for `mystat://`
+- Android home screen widgets with multiple layouts
+
+## Data Model
+
+### Core
+
+- `id`
+- `name`
+- `color`
+- `totalScore`
+- timestamps
+
+### Skill
+
+- `id`
+- `coreId`
+- `name`
+- `totalScore`
+- timestamps
+
+### Habit
+
+- `id`
+- `skillId`
+- `name`
+- `description`
+- `metric`
+- `scale`
+- `countDays`
+- `streak`
+- `bestStreak`
+- `totalScore`
+- `lastDoneDate`
+- timestamps
+
+### Event
+
+Each log entry stores:
+
+- `habitId`
+- `skillId`
+- `coreId`
+- `rawAmount`
+- `scaled`
+- `points`
+- `at`
+- `day`
+
+## Scoring And Streak Rules
+
+- Logged points are computed from `ceil(rawAmount * scale)`
+- Negative or non-numeric amounts are rejected
+- `countDays` increases only once per habit per day
+- Logging multiple times on the same day adds points, but does not double-count the day
+- Streaks increment only when the next completion lands on the next calendar day
+- If a day gap is missed, the streak resets to `1`
+
+## Navigation Structure
+
+Bottom tabs:
+
+- `Home`
+- `Analytics`
+- `Settings`
+
+Main stack screens currently present in the app:
+
+- `HomeMain`
+- `AddCore`
+- `EditCore`
+- `AddSkill`
+- `EditSkill`
+- `Habits`
+- `AddHabit`
+- `EditHabit`
+- `QuickLog`
+- `HabitDetail`
+- `CoreDetail`
+- `Skills`
+- `SkillDetail`
+- `AnalyticsMain`
+- `CoreStreakCalendar`
+- `SettingsMain`
+
+## Android Widget Support
+
+MyStatApp includes a native Android widget package under `android/app/src/main/java/com/dimascorp/mystat/widget`.
+
+### Widget variants currently in the project
+
+- `Radar 2x2`
+- `Pie 2x2`
+- `Scores 4x2`
+- `Quick 4x2`
+- `Quick 4x3`
+- `Target 4x4`
+- `Totals 4x4`
+
+Widget payloads are built from app state in `src/utils/widgetPayload.js` and synced through the React Native bridge when core totals or display settings change.
+
+## Deep Links
+
+The app registers the `mystat://` scheme.
+
+Examples:
+
+- `mystat://home`
+- `mystat://analytics`
+- `mystat://settings`
+- `mystat://app/quick-log`
+
+## Tech Stack
+
+- React Native CLI
+- React Navigation
+- AsyncStorage
+- `react-native-chart-kit`
+- `react-native-svg`
+- Native Android widget code in Kotlin
+- Jest for tests
+
+## Repository Layout
+
+```text
+MyStatApp/
+├── android/                 Android native app and widgets
+├── ios/                     iOS native app
+├── docs/
+│   └── RUN_ANDROID.md       Android setup guide
+├── src/
+│   ├── components/          Charts and UI building blocks
+│   ├── context/             App state and business logic
+│   ├── screens/             Screen-level UI
+│   ├── utils/               Storage, widgets, backup, formatting, streak logic
+│   └── data/                Sample seed/support data
+├── __tests__/               Jest coverage for core logic
+├── App.tsx                  RN entry wrapper
+├── src/App.js               App root
+└── run-mystatapp.sh         Local Android dev helper script
+```
+
+## Local Development
+
+### Prerequisites
+
+- Node.js `>=20`
+- npm
+- Android Studio for Android development
+- Java 17
+- CocoaPods for iOS dependency installation
+
+### Install dependencies
 
 ```sh
-# Using npm
+npm ci
+```
+
+### Start Metro
+
+```sh
 npm start
-
-# OR using Yarn
-yarn start
 ```
 
-## Step 2: Build and run your app
-
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
-
-### Android
+### Run on Android
 
 ```sh
-# Using npm
 npm run android
-
-# OR using Yarn
-yarn android
 ```
 
-### iOS
+For a more detailed Android flow, see [docs/RUN_ANDROID.md](./docs/RUN_ANDROID.md).
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
-
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+### Run on iOS
 
 ```sh
 bundle install
-```
-
-Then, and every time you update your native dependencies, run:
-
-```sh
 bundle exec pod install
+npm run ios
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+## Available Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `npm start` | Start Metro bundler |
+| `npm run android` | Build and launch Android app |
+| `npm run ios` | Build and launch iOS app |
+| `npm test` | Run Jest test suite |
+| `npm run lint` | Run ESLint |
+
+### Helper script
+
+`run-mystatapp.sh` is a local Android-focused helper that:
+
+- sets Java 17
+- restarts `adb`
+- re-applies port reverse
+- kills an old Metro instance on `8081`
+- starts Metro with reset cache
+- relaunches the installed Android app
+
+## Testing
+
+Current tests cover the most important business logic:
+
+- `StatContext` state seeding, logging, cascaded deletes, reset, sample data, and settings persistence
+- widget payload formatting and top-core limiting
+- day helpers
+- number formatting helpers
+- core streak helpers
+
+Run:
 
 ```sh
-# Using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
+npm test
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+## Backup Format
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+Progress export writes a JSON file with this top-level shape:
 
-## Step 3: Modify your app
+```json
+{
+  "app": "MyStatApp",
+  "backupVersion": 1,
+  "exportedAt": "2026-05-12T00:00:00.000Z",
+  "data": {
+    "cores": [],
+    "skills": [],
+    "habits": [],
+    "events": [],
+    "settings": {}
+  }
+}
+```
 
-Now that you have successfully run the app, let's make changes!
+The import path validates:
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+- app identity
+- backup version
+- JSON structure
+- required progress arrays
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+## Default App Settings
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+The app currently initializes with:
 
-## Congratulations! :tada:
+- `theme: light`
+- `totalScoreTarget: 10000`
+- `averageScoreTarget: 1000`
+- `compactNumbers: true`
 
-You've successfully run and modified your React Native App. :partying_face:
+## Notes On Current Scope
 
-### Now what?
+- The app is local-first; no backend or account sync is implemented in this repository.
+- Data storage is device-local.
+- Analytics already includes a placeholder section for future trend expansion.
+- Android widget support is implemented; there is no equivalent iOS widget implementation in this repo.
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Key Files
 
-# Troubleshooting
+- [src/context/StatContext.js](./src/context/StatContext.js)
+- [src/navigation.js](./src/navigation.js)
+- [src/screens/HomeScreen.js](./src/screens/HomeScreen.js)
+- [src/screens/AnalyticsScreen.js](./src/screens/AnalyticsScreen.js)
+- [src/screens/QuickLogScreen.js](./src/screens/QuickLogScreen.js)
+- [src/screens/SettingsScreen.js](./src/screens/SettingsScreen.js)
+- [src/utils/widgetPayload.js](./src/utils/widgetPayload.js)
+- [docs/RUN_ANDROID.md](./docs/RUN_ANDROID.md)
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+## Status
 
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+This README reflects the current codebase in this repository as inspected on `2026-05-12`.
